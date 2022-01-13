@@ -1,0 +1,3 @@
+dependencies {
+    implementation files("../app/src/main/libs/zblelib-release.aar")
+}
