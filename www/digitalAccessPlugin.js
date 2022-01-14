@@ -17,6 +17,14 @@ cordova.define("cordova-plugin-access.DigitalAccessPlugin", function(require, ex
     cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'scan', null);
   }
   
+  DigitalAccessPlugin.prototype.send = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'send', null);
+  }
+  
+  DigitalAccessPlugin.prototype.stop = function(successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'stop', null);
+  }
+  
   
   DigitalAccessPlugin.prototype.init = function(successCallback, errorCallback, timeoutScan) {
     cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan]);
