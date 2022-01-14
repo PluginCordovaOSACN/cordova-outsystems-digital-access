@@ -1,4 +1,4 @@
-cordova.define("cordova-plugin-access.DigitalAccessPlugin", function(require, exports, module) {
+
   // Empty constructor
   function DigitalAccessPlugin() {}
   
@@ -40,5 +40,3 @@ cordova.define("cordova-plugin-access.DigitalAccessPlugin", function(require, ex
     return window.plugins.digitalAccessPlugin;
   };
   cordova.addConstructor(DigitalAccessPlugin.install);
-  });
-  
