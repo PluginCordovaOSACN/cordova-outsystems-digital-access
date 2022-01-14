@@ -1,17 +1,48 @@
 {
-  "name": "cordova-outsystems-access",
-  "version": "0.0.1",
-  "description": "An Android Cordova plugin that allows users to display simple Toast messages at the bottom of the screen.",
+  "_from": "git+https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+  "_id": "cordova-outsystems-access@0.0.1",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/cordova-outsystems-access",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+    "rawSpec": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+    "saveSpec": "git+https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+    "fetchSpec": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "git+https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git#d989139eecf5c91d9ab2b216c9a91d9c1ae686bb",
+  "_spec": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git",
+  "_where": "C:\\Cordova\\Saipem",
+  "author": {
+    "name": "Pier Paolo Annis",
+    "email": "pier.paolo.annis@accenture.com"
+  },
+  "bugs": {
+    "url": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/issues"
+  },
+  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-outsystems-access",
     "platforms": [
       "android"
     ]
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git"
-  },
+  "deprecated": false,
+  "description": "An Android Cordova plugin that allows users to display simple Toast messages at the bottom of the screen.",
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "homepage": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/",
   "keywords": [
     "Toast",
     "Notification",
@@ -20,16 +51,11 @@
     "ecosystem:cordova",
     "cordova-android"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.0.0"
-    }
-  ],
-  "author": "Pier Paolo Annis <pier.paolo.annis@accenture.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/issues"
+  "name": "cordova-outsystems-access",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git"
   },
-  "homepage": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/"
+  "version": "0.0.1"
 }
