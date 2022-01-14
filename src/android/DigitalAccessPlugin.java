@@ -2,6 +2,7 @@ package com.cordova.plugin.access;
 // The native Toast API
 import static java.security.AccessController.getContext;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.widget.Toast;
@@ -14,36 +15,52 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import zucchettiaxess.zreader.zblelib.Lib.AppsUtility.ErrorInfo;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeacon;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeaconListener;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEScan;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLESend;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLESendListener;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BleScanListener;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.Dir_Type;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.StateOfRdrVerify;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.StateOfVerify;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.ZAX_BLE_Devices;
+import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.f;
 
 public class DigitalAccessPlugin extends CordovaPlugin {
  
   private final String SHOW = "show";
   private final String INIT = "init";
   private final String SCAN = "scan";
+  private final String SEND = "send";
+  private final String STOP = "stop";
 
   private ErrorInfo mainErrorInfo;
   private BLEScan bleScan;
   static Context mainContext;
   private long timeoutScan = 10000;
+  private static ProgressDialog pd;
 
   private static final String DURATION_LONG = "long";
   @Override
   public boolean execute(String action, JSONArray args,
-    final CallbackContext callbackContext) {
+    final CallbackContext callbackContext)  {
 
     PluginResult pluginResult;
       switch (action){
         case INIT:
+          pd = new ProgressDialog(cordova.getContext());
+          //pd.setTitle(R.string.SendBadgePDTitle);
+          pd.setMessage("BLE SEND");
 
           try {
-            JSONObject options = args.getJSONObject(0);
-            timeoutScan = options.getLong("timeoutScan");
+            timeoutScan = args.getLong(0);
           } catch (JSONException e) {
-            callbackContext.error("Error encountered: " + e.getMessage());
-            return false;
+            pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
+            callbackContext.sendPluginResult(pluginResult);
           }
+
+
           pluginResult = new PluginResult(PluginResult.Status.OK);
           callbackContext.sendPluginResult(pluginResult);
           break;
@@ -85,7 +102,46 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
 
           break;
+        case SEND:
+          if(BLEScan.getBleScan() == null || BLEScan.getDevicesArray() == null || BLEScan.getDevicesArray().size() == 0){
+            pluginResult = new PluginResult(PluginResult.Status.ERROR, "No reader found");
+            callbackContext.sendPluginResult(pluginResult);
+          }
 
+          BLESend sender;
+          sender = new BLESend(cordova.getContext());
+          sendPD(true,"BLE Send in progress");
+
+          sender.sendBadgeToBle(BLEScan.getDevicesArray().get(0), mainErrorInfo, Dir_Type.DIR_IN);
+          sender.setBleListener(new BLESendListener() {
+            @Override
+            public void onBLEReaderDisconnected() {
+              sendPD(false,"BLE Send in progress");
+            }
+
+            @Override
+            public void onSendBadgeCompleted() {
+              PluginResult pluginResult;
+
+              pluginResult = new PluginResult(PluginResult.Status.OK, "Badge sended");
+              callbackContext.sendPluginResult(pluginResult);
+
+
+
+              sendPD(false,"BLE Send in progress");
+            }
+
+            @Override
+            public void onNewActionInSend(f f) {
+
+            }
+          });
+          break;
+
+        case STOP:
+          bleScan.stopBLEScanning();
+
+          break;
         default:
           throw new IllegalStateException("Unexpected value: " + action);
       }
@@ -118,12 +174,21 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         callbackContext.sendPluginResult(pluginResult2);
       }
     });
-  
+
 
 
 
 
   }
 
+  public static void sendPD(boolean start, String string) {
+    if (start) {
+      pd.show();
+      pd.setMessage(string);
+      pd.setCancelable(false);
+    } else {
+      pd.dismiss();
+    }
+  }
 
 }
