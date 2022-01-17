@@ -4,7 +4,7 @@ public class Result {
     private long timeout;
     private String numberOfBadge;
     private String method;
-    private String status;
+    private boolean Success;
     private String message;
     private String badgeCode;
     private String deviceMac;
@@ -37,12 +37,12 @@ public class Result {
         this.method = method;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean isSuccess() {
+        return Success;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setSuccess(boolean success) {
+        Success = success;
     }
 
     public String getMessage() {

@@ -198,12 +198,12 @@ private boolean init(){
   result.setDbDistance(dbDistance);
 
   if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
-    result.setStatus("error");
+    result.setSuccess(false);
     result.setMessage("db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
             "To set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))");
     return false;
   }
-  result.setStatus("OK");
+  result.setSuccess(true);
 
   return true;
 }
@@ -216,7 +216,7 @@ private boolean init(){
         //no devices found?
         if(BLEScan.getDevicesArray().size() == 0)
         {
-          result.setStatus("error");
+          result.setSuccess(false);
           result.setMessage("No devices found");
 
           PluginResult pluginResult = getPluginResult();
@@ -227,7 +227,7 @@ private boolean init(){
       @Override
       public void onBleDeviceFound(final BluetoothDevice device) {
         //add to textview
-        result.setStatus("OK");
+        result.setSuccess(true);
         result.setMessage("Device found");
         result.setDeviceMac(device.getAddress());
         result.setDeviceName(device.getName());
