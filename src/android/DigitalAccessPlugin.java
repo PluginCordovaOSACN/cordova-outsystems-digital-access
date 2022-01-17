@@ -38,15 +38,22 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   private final String SEND = "send";
   private final String STOP = "stop";
 
+  private final int dbMinDistance = 40;
+  private final int dbMaxDistance = 110;
+
+  private static int dbDistance = 100;
+  private static String customBadge = "123456";
+  private long timeoutScan = 10000;
+
   private ErrorInfo mainErrorInfo;
   private BLEScan bleScan;
   static Context mainContext;
   private Badge badge;
 
   private Result result;
-  private static String customBadge = "123456";
 
-  private long timeoutScan = 10000;
+
+
   private static ProgressDialog pd;
 
   private static final String DURATION_LONG = "long";
@@ -68,6 +75,9 @@ public class DigitalAccessPlugin extends CordovaPlugin {
               timeoutScan = args.getLong(0);
               if(args.length()>1){
                 customBadge = args.getString(1);
+              }if(args.length()>2){
+                dbDistance = args.getInt(2);
+
               }
             } catch (JSONException e) {
               pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
@@ -76,10 +86,10 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           }
 
           init();
-          result.setMethod(INIT);
-          Gson gson = new Gson();
 
-          pluginResult = new PluginResult(PluginResult.Status.OK, gson.toJson(result));
+          result.setMethod(INIT);
+
+          pluginResult = getPluginResult();
           callbackContext.sendPluginResult(pluginResult);
           break;
         case SHOW:
@@ -110,12 +120,15 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
 
           if(result==null){
-            init();
+            if(!init()){
+              result.setMethod(SCAN);
+              pluginResult = getPluginResult();
+              callbackContext.sendPluginResult(pluginResult);
+            };
           }
           result.setMethod(SCAN);
-
           bleScan = new BLEScan(mainContext, mainErrorInfo);
-          bleScan.startBLEScanning(mainErrorInfo, 110, bleScan,timeoutScan);
+          bleScan.startBLEScanning(mainErrorInfo, dbDistance, bleScan,timeoutScan);
 
           bleCallBack(bleScan, callbackContext);
 
@@ -169,7 +182,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   }
 
 
-private void init(){
+private boolean init(){
 
   result = new Result();
 
@@ -180,9 +193,19 @@ private void init(){
   badge = new Badge(mainContext, mainErrorInfo, customBadge );
 
   result.setTimeout(timeoutScan);
-  result.setCustomBadge(customBadge);
+  result.setNumberOfBadge(customBadge);
   result.setBadgeCode(badge.getCodeStringOfBadge(false));
+  result.setDbDistance(dbDistance);
 
+  if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
+    result.setStatus("error");
+    result.setMessage("db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
+            "To set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))");
+    return false;
+  }
+  result.setStatus("OK");
+
+  return true;
 }
 
 
@@ -196,16 +219,20 @@ private void init(){
           result.setStatus("error");
           result.setMessage("No devices found");
 
-          PluginResult pluginResult2 = new PluginResult(PluginResult.Status.OK, "No devices found" +timeoutScan);
-          callbackContext.sendPluginResult(pluginResult2);
+          PluginResult pluginResult = getPluginResult();
+          callbackContext.sendPluginResult(pluginResult);
         }
       }
 
       @Override
       public void onBleDeviceFound(final BluetoothDevice device) {
         //add to textview
-        PluginResult pluginResult2 = new PluginResult(PluginResult.Status.OK, "Name: " + device.getName() +"\n" + "MAC:" + device.getAddress() +"\n\n" + timeoutScan);
-        callbackContext.sendPluginResult(pluginResult2);
+        result.setStatus("OK");
+        result.setMessage("Device found");
+        result.setDeviceMac(device.getAddress());
+        result.setDeviceName(device.getName());
+        PluginResult pluginResult = getPluginResult();
+        callbackContext.sendPluginResult(pluginResult);
       }
     });
 
@@ -225,4 +252,9 @@ private void init(){
     }
   }
 
+
+  private PluginResult getPluginResult(){
+    Gson gson = new Gson();
+    return new PluginResult(PluginResult.Status.OK, gson.toJson(result));
+  }
 }

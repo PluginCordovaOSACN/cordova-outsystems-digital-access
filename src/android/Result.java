@@ -2,12 +2,16 @@ package com.cordova.plugin.access;
 
 public class Result {
     private long timeout;
-    private String customBadge;
+    private String numberOfBadge;
     private String method;
     private String status;
     private String message;
     private String badgeCode;
     private String deviceMac;
+    private String deviceName;
+    private Integer dbDistance;
+
+
 
     public long getTimeout() {
         return timeout;
@@ -17,12 +21,12 @@ public class Result {
         this.timeout = timeout;
     }
 
-    public String getCustomBadge() {
-        return customBadge;
+    public String getNumberOfBadge() {
+        return numberOfBadge;
     }
 
-    public void setCustomBadge(String customBadge) {
-        this.customBadge = customBadge;
+    public void setNumberOfBadge(String numberOfBadge) {
+        this.numberOfBadge = numberOfBadge;
     }
 
     public String getMethod() {
@@ -64,4 +68,22 @@ public class Result {
     public void setDeviceMac(String deviceMac) {
         this.deviceMac = deviceMac;
     }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public Integer getDbDistance() {
+        return dbDistance;
+    }
+
+    public void setDbDistance(Integer dbDistance) {
+        this.dbDistance = dbDistance;
+    }
+
+
 }

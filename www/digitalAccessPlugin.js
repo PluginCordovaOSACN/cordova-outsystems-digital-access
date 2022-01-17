@@ -26,8 +26,8 @@
   }
   
   
-  DigitalAccessPlugin.prototype.init = function(successCallback, errorCallback, timeoutScan, customBadge) {
-    cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan, customBadge ]);
+  DigitalAccessPlugin.prototype.init = function(successCallback, errorCallback, timeoutScan, numberOfBadge, dbDistance) {
+    cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan, numberOfBadge, dbDistance]);
   }
   
   
