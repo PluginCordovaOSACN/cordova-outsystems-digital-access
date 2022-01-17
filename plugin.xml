@@ -34,5 +34,7 @@
 		<framework src="sdk/android/dependencies.gradle" custom="true" type="gradleReference"/>
         
         <source-file src="src/android/DigitalAccessPlugin.java" target-dir="src/com/cordova/plugin/access" />
+        <source-file src="src/android/Result.java" target-dir="src/com/cordova/plugin/access" />
+
     </platform>
 </plugin>
