@@ -7,6 +7,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.widget.Toast;
 // Cordova-required packages
+import com.google.gson.Gson;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
@@ -26,6 +28,7 @@ import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.StateOfRdrVerify;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.StateOfVerify;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.ZAX_BLE_Devices;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.f;
+import zucchettiaxess.zreader.zblelib.Lib.Stamp.Badge;
 
 public class DigitalAccessPlugin extends CordovaPlugin {
  
@@ -38,6 +41,11 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   private ErrorInfo mainErrorInfo;
   private BLEScan bleScan;
   static Context mainContext;
+  private Badge badge;
+
+  private Result result;
+  private static String customBadge = "123456";
+
   private long timeoutScan = 10000;
   private static ProgressDialog pd;
 
@@ -47,21 +55,31 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     final CallbackContext callbackContext)  {
 
     PluginResult pluginResult;
-      switch (action){
+
+    switch (action){
         case INIT:
+
           pd = new ProgressDialog(cordova.getContext());
           //pd.setTitle(R.string.SendBadgePDTitle);
-          pd.setMessage("BLE SEND");
+          pd.setMessage("BLE INIT");
 
-          try {
-            timeoutScan = args.getLong(0);
-          } catch (JSONException e) {
-            pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
-            callbackContext.sendPluginResult(pluginResult);
+          if(args!= null && args.length()>0){
+            try {
+              timeoutScan = args.getLong(0);
+              if(args.length()>1){
+                customBadge = args.getString(1);
+              }
+            } catch (JSONException e) {
+              pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
+              callbackContext.sendPluginResult(pluginResult);
+            }
           }
 
+          init();
+          result.setMethod(INIT);
+          Gson gson = new Gson();
 
-          pluginResult = new PluginResult(PluginResult.Status.OK);
+          pluginResult = new PluginResult(PluginResult.Status.OK, gson.toJson(result));
           callbackContext.sendPluginResult(pluginResult);
           break;
         case SHOW:
@@ -89,17 +107,17 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           callbackContext.sendPluginResult(pluginResult);
           break;
         case SCAN:
-          //scan the badge
-          mainErrorInfo = new ErrorInfo();
-          mainErrorInfo.ClearAll();
 
-          mainContext = cordova.getContext();
+
+          if(result==null){
+            init();
+          }
+          result.setMethod(SCAN);
+
           bleScan = new BLEScan(mainContext, mainErrorInfo);
-
           bleScan.startBLEScanning(mainErrorInfo, 110, bleScan,timeoutScan);
 
           bleCallBack(bleScan, callbackContext);
-
 
           break;
         case SEND:
@@ -151,7 +169,21 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   }
 
 
+private void init(){
 
+  result = new Result();
+
+  mainContext = cordova.getContext();
+  mainErrorInfo = new ErrorInfo();
+  mainErrorInfo.ClearAll();
+
+  badge = new Badge(mainContext, mainErrorInfo, customBadge );
+
+  result.setTimeout(timeoutScan);
+  result.setCustomBadge(customBadge);
+  result.setBadgeCode(badge.getCodeStringOfBadge(false));
+
+}
 
 
   private void bleCallBack(final BLEScan bleScan,final CallbackContext callbackContext) {
@@ -161,6 +193,8 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         //no devices found?
         if(BLEScan.getDevicesArray().size() == 0)
         {
+          result.setStatus("error");
+          result.setMessage("No devices found");
 
           PluginResult pluginResult2 = new PluginResult(PluginResult.Status.OK, "No devices found" +timeoutScan);
           callbackContext.sendPluginResult(pluginResult2);
