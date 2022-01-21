@@ -32,7 +32,7 @@ import zucchettiaxess.zreader.zblelib.Lib.Stamp.Badge;
 
 public class DigitalAccessPlugin extends CordovaPlugin {
  
-  private final String SHOW = "show";
+
   private final String INIT = "init";
   private final String SCAN = "scan";
   private final String SEND = "send";
@@ -52,7 +52,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
   private Result result;
 
-
+  private final String fakeDevice = "FakeDevice";
 
   private static ProgressDialog pd;
 
@@ -80,63 +80,70 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
               }
             } catch (JSONException e) {
-              pluginResult = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
-              callbackContext.sendPluginResult(pluginResult);
+              result.setSuccess(false);
+              result.setMessage( e.getMessage());
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
             }
           }
 
-          init();
+          init(INIT);
 
-          result.setMethod(INIT);
-
-          pluginResult = getPluginResult();
+          pluginResult = getPluginResult(PluginResult.Status.OK);
           callbackContext.sendPluginResult(pluginResult);
           break;
-        case SHOW:
-            /*if (!action.equals("show")) {
-            callbackContext.error("\"" + action + "\" is not a recognized action.");
-            return false;
-          }*/
-          String message;
-          String duration;
-          try {
-            JSONObject options = args.getJSONObject(0);
-            message = options.getString("message");
-            duration = options.getString("duration");
-          } catch (JSONException e) {
-            callbackContext.error("Error encountered: " + e.getMessage());
-            return false;
-          }
-          // Create the toast
-          Toast toast = Toast.makeText(cordova.getActivity(), message,
-            DURATION_LONG.equals(duration) ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
-          // Display toast
-          toast.show();
-          // Send a positive result to the callbackContext
-          pluginResult = new PluginResult(PluginResult.Status.OK);
-          callbackContext.sendPluginResult(pluginResult);
-          break;
+
         case SCAN:
-
-
           if(result==null){
-            if(!init()){
-              result.setMethod(SCAN);
-              pluginResult = getPluginResult();
-              callbackContext.sendPluginResult(pluginResult);
+            if(!init(SCAN)){
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
             };
           }
           result.setMethod(SCAN);
-          bleScan = new BLEScan(mainContext, mainErrorInfo);
-          bleScan.startBLEScanning(mainErrorInfo, dbDistance, bleScan,timeoutScan);
+          boolean isUsingFakeDevice = false;
+          if(args!= null && args.length()>0){
+            try {
+              isUsingFakeDevice = args.getBoolean(0);
+            } catch (JSONException e) {
+              result.setSuccess(false);
+              result.setMessage( e.getMessage());
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));            }
+          }
 
-          bleCallBack(bleScan, callbackContext);
+         if(!isUsingFakeDevice){
+           bleScan = new BLEScan(mainContext, mainErrorInfo);
+
+           bleScan.startBLEScanning(mainErrorInfo, dbDistance, bleScan,timeoutScan);
+
+           bleCallBack(bleScan, callbackContext);
+         }else{
+           result.setSuccess(true);
+           result.setMessage("FakeDevice found");
+           result.setDeviceName(fakeDevice);
+
+           callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+         }
+
 
           break;
         case SEND:
+          if(result==null){
+            if(!init(SEND)){
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+            };
+          }
+          result.setMethod(SEND);
+
+          //simulate access with fake reader
+          if(fakeDevice.equals(result.getDeviceName())){
+              result.setSuccess(true);
+              result.setMessage("Badge sended");
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+          }
+
           if(BLEScan.getBleScan() == null || BLEScan.getDevicesArray() == null || BLEScan.getDevicesArray().size() == 0){
-            pluginResult = new PluginResult(PluginResult.Status.ERROR, "No reader found");
-            callbackContext.sendPluginResult(pluginResult);
+            result.setSuccess(false);
+            result.setMessage("No reader found");
+            callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.NO_RESULT));
           }
 
           BLESend sender;
@@ -147,17 +154,17 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           sender.setBleListener(new BLESendListener() {
             @Override
             public void onBLEReaderDisconnected() {
+
               sendPD(false,"BLE Send in progress");
+
+
             }
 
             @Override
             public void onSendBadgeCompleted() {
-              PluginResult pluginResult;
-
-              pluginResult = new PluginResult(PluginResult.Status.OK, "Badge sended");
-              callbackContext.sendPluginResult(pluginResult);
-
-
+              result.setSuccess(true);
+              result.setMessage("Badge sended");
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
 
               sendPD(false,"BLE Send in progress");
             }
@@ -170,8 +177,16 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           break;
 
         case STOP:
-          bleScan.stopBLEScanning();
+          if(result==null){
+            if(!init(STOP)){
 
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+            };
+          }
+          result.setMethod(STOP);
+          bleScan.stopBLEScanning();
+          result.setMessage("Scan stopped");
+          callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
           break;
         default:
           throw new IllegalStateException("Unexpected value: " + action);
@@ -182,7 +197,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   }
 
 
-private boolean init(){
+private boolean init(String method){
 
   result = new Result();
 
@@ -196,7 +211,7 @@ private boolean init(){
   result.setNumberOfBadge(customBadge);
   result.setBadgeCode(badge.getCodeStringOfBadge(false));
   result.setDbDistance(dbDistance);
-
+  result.setMethod(method);
   if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
     result.setSuccess(false);
     result.setMessage("db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
@@ -219,8 +234,7 @@ private boolean init(){
           result.setSuccess(false);
           result.setMessage("No devices found");
 
-          PluginResult pluginResult = getPluginResult();
-          callbackContext.sendPluginResult(pluginResult);
+          callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.NO_RESULT));
         }
       }
 
@@ -231,8 +245,7 @@ private boolean init(){
         result.setMessage("Device found");
         result.setDeviceMac(device.getAddress());
         result.setDeviceName(device.getName());
-        PluginResult pluginResult = getPluginResult();
-        callbackContext.sendPluginResult(pluginResult);
+        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
       }
     });
 
@@ -253,8 +266,8 @@ private boolean init(){
   }
 
 
-  private PluginResult getPluginResult(){
+  private PluginResult getPluginResult(PluginResult.Status status){
     Gson gson = new Gson();
-    return new PluginResult(PluginResult.Status.OK, gson.toJson(result));
+    return new PluginResult(status, gson.toJson(result));
   }
 }
