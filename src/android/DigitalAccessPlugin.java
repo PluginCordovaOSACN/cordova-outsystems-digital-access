@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import zucchettiaxess.zreader.zblelib.Lib.AppsUtility.ErrorInfo;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeacon;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeaconListener;
@@ -137,6 +139,8 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           if(fakeDevice.equals(result.getDeviceName())){
               result.setSuccess(true);
               result.setMessage("Badge sended");
+              result.setDate(new Date());
+              result.setLocation("Spark1");
               callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
           }
 
