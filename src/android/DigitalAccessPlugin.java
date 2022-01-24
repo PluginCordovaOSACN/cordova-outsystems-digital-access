@@ -8,6 +8,7 @@ import android.content.Context;
 import android.widget.Toast;
 // Cordova-required packages
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -277,7 +278,7 @@ private boolean init(String method){
 
 
   private PluginResult getPluginResult(PluginResult.Status status){
-    Gson gson = new Gson();
+    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     return new PluginResult(status, gson.toJson(result));
   }
 }
