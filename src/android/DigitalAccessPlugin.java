@@ -46,6 +46,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   private static int dbDistance = 100;
   private static String customBadge = "123456";
   private long timeoutScan = 10000;
+  private String buildingDefault = "Default Spark1";
 
   private ErrorInfo mainErrorInfo;
   private BLEScan bleScan;
@@ -81,6 +82,10 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 dbDistance = args.getInt(2);
 
               }
+                if(args.length()>3){
+                  buildingDefault = args.getString(3);
+
+                }
             } catch (JSONException e) {
               result.setSuccess(false);
               result.setMessage( e.getMessage());
@@ -139,8 +144,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           if(fakeDevice.equals(result.getDeviceName())){
               result.setSuccess(true);
               result.setMessage("Badge sended");
-              result.setDate(new Date());
-              result.setLocation("Spark1");
+
               callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
           }
 
@@ -215,6 +219,8 @@ private boolean init(String method){
   result.setNumberOfBadge(customBadge);
   result.setBadgeCode(badge.getCodeStringOfBadge(false));
   result.setDbDistance(dbDistance);
+  result.setDate(new Date());
+  result.setLocation(buildingDefault);  
   result.setMethod(method);
   if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
     result.setSuccess(false);
