@@ -45,7 +45,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
   private final int dbMaxDistance = 110;
 
   private static int dbDistance = 100;
-  private static String customBadge = "123456";
+  private static String badgeCode = "123456";
   private long timeoutScan = 10000;
   private String buildingDefault = "Default Spark1";
 
@@ -78,7 +78,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             try {
               timeoutScan = args.getLong(0);
               if(args.length()>1){
-                customBadge = args.getString(1);
+                badgeCode = args.getString(1);
               }if(args.length()>2){
                 dbDistance = args.getInt(2);
 
@@ -101,21 +101,29 @@ public class DigitalAccessPlugin extends CordovaPlugin {
           break;
 
         case SCAN:
+          boolean isUsingFakeDevice = false;
+          if(args!= null && args.length()>0){
+            try {
+              badgeCode = args.getString(0);
+              if(args.length()>1){
+                isUsingFakeDevice = args.getBoolean(1);
+
+              }
+            } catch (JSONException e) {
+              result = new Result();
+              result.setMethod(SCAN);
+              result.setSuccess(false);
+              result.setMessage( e.getMessage());
+              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));            }
+          }
+
           if(result==null){
             if(!init(SCAN)){
               callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
             };
           }
           result.setMethod(SCAN);
-          boolean isUsingFakeDevice = false;
-          if(args!= null && args.length()>0){
-            try {
-              isUsingFakeDevice = args.getBoolean(0);
-            } catch (JSONException e) {
-              result.setSuccess(false);
-              result.setMessage( e.getMessage());
-              callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));            }
-          }
+
 
          if(!isUsingFakeDevice){
            bleScan = new BLEScan(mainContext, mainErrorInfo);
@@ -214,14 +222,14 @@ private boolean init(String method){
   mainErrorInfo = new ErrorInfo();
   mainErrorInfo.ClearAll();
 
-  badge = new Badge(mainContext, mainErrorInfo, customBadge );
+  badge = new Badge(mainContext, mainErrorInfo, badgeCode );
 
   result.setTimeout(timeoutScan);
-  result.setNumberOfBadge(customBadge);
+  result.setNumberOfBadge(badgeCode);
   result.setBadgeCode(badge.getCodeStringOfBadge(false));
   result.setDbDistance(dbDistance);
   result.setDate(new Date());
-  result.setLocation(buildingDefault);  
+  result.setLocation(buildingDefault);
   result.setMethod(method);
   if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
     result.setSuccess(false);
