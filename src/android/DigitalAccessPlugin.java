@@ -117,7 +117,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
               callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));            }
           }
 
-          if(result==null){
+          if(result==null || !badgeCode.equals(result.getBadgeCode())){
             if(!init(SCAN)){
               callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
             };
