@@ -231,6 +231,8 @@ private boolean init(String method){
   result.setDate(new Date());
   result.setLocation(buildingDefault);
   result.setMethod(method);
+  result.setTimeout(false);
+
   if(dbDistance<dbMinDistance || dbDistance>dbMaxDistance) {
     result.setSuccess(false);
     result.setMessage("db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
@@ -252,8 +254,9 @@ private boolean init(String method){
         {
           result.setSuccess(false);
           result.setMessage("No devices found");
+          result.setTimeout(true);
 
-          callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.NO_RESULT));
+          callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
         }
       }
 

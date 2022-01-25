@@ -14,7 +14,15 @@ public class Result {
     private Integer dbDistance;
     private Date date;
     private String location;
+    private boolean isTimeout;
 
+    public boolean isTimeout() {
+        return isTimeout;
+    }
+
+    public void setTimeout(boolean timeout) {
+        isTimeout = timeout;
+    }
 
     public Date getDate() {
         return date;
