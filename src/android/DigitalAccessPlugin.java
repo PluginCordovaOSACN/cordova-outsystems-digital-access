@@ -78,15 +78,13 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             try {
               timeoutScan = args.getLong(0);
               if(args.length()>1){
-                badgeCode = args.getString(1);
+                  dbDistance = args.getInt(1);
               }if(args.length()>2){
-                dbDistance = args.getInt(2);
-
+                  buildingDefault = args.getString(2);
               }
-                if(args.length()>3){
-                  buildingDefault = args.getString(3);
-
-                }
+              if(args.length()>3){
+                  badgeCode = args.getString(3);
+              }
             } catch (JSONException e) {
               result.setSuccess(false);
               result.setMessage( e.getMessage());
