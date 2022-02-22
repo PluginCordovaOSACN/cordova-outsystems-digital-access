@@ -26,12 +26,12 @@
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
                 <uses-feature android:name="android.hardware.bluetooth" android:required="true" />
-                <uses-permission android:name="android.permission.BLUETOOTH" android:required="true" />
-                <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:required="true" />
-                <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="true" />
-                <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" android:required="true" />
-                <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:required="true" />
-                <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" android:required="true" />
+                <uses-permission android:name="android.permission.BLUETOOTH" />
+                <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"  />
+                <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"  />
+                <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED"  />
+                <uses-permission android:name="android.permission.BLUETOOTH_SCAN"  />
+                <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"  />
         </config-file>
 
         <resource-file src="sdk/android/zblelib-release.aar" target="libs/zblelib-release.aar"/>
