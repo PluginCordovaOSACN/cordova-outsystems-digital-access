@@ -20,8 +20,7 @@
  
  
  DigitalAccessPlugin.prototype.init = function(successCallback, errorCallback, timeoutScan, dbDistance, building, badgeCode) {
-    bluetoothle.requestPermission().then(cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan, dbDistance, building, badgeCode ]), cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'bluetoothError',['init']));
-    
+  cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan, dbDistance, building, badgeCode ]);    
  }
  
  
