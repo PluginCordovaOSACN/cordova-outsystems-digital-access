@@ -101,7 +101,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             for(int i=0; i<grantResults.length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(cordova.getActivity(),
-                            "Bluetooth Permission is required for access!",
+                            "Bluetooth Permission is required for access! " + permissions[i],
                             Toast.LENGTH_LONG).show();
                 }
             }
