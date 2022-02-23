@@ -53,6 +53,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     private final String SCAN = "scan";
     private final String SEND = "send";
     private final String STOP = "stop";
+    private final String BLUETOOTH_ERROR = "bluetoothError";
 
     private final int dbMinDistance = 40;
     private final int dbMaxDistance = 110;
@@ -165,6 +166,24 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         PluginResult pluginResult;
 
         switch (action) {
+            case BLUETOOTH_ERROR:
+                String nameMethod = "";
+                if (args != null && args.length() > 0) {
+                    try {
+                        nameMethod = args.getString(0);
+                    } catch (JSONException e) {
+                        result.setSuccess(false);
+                        result.setMessage(e.getMessage());
+                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+                    }
+                }
+                result = new Result();
+                result.setMethod(nameMethod);
+                result.setSuccess(false);
+                result.setMessage("Permission Bluetooth non allow");
+                callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+
+                break;
             case INIT:
                 try {
 
