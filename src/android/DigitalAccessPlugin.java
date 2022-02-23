@@ -285,7 +285,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 if (BLEScan.getBleScan() == null || BLEScan.getDevicesArray() == null || BLEScan.getDevicesArray().size() == 0) {
                     result.setSuccess(false);
                     result.setMessage("No reader found");
-                    callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.NO_RESULT));
+                    callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
                 }
 
                 BLESend sender;
@@ -296,15 +296,17 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 sender.setBleListener(new BLESendListener() {
                     @Override
                     public void onBLEReaderDisconnected() {
-                        sendPD(false, "BLE Send in progress");
+                        result.setSuccess(false);
+                        result.setMessage("Badge not send");
                         bleScan.stopBLEScanning();
+                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+
                     }
 
                     @Override
                     public void onSendBadgeCompleted() {
                         result.setSuccess(true);
                         result.setMessage("Badge sended");
-                        sendPD(false, "BLE Send in progress");
                         bleScan.stopBLEScanning();
                         callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
 
