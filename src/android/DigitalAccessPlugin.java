@@ -6,10 +6,12 @@ import static java.security.AccessController.getContext;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PermissionHelper;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,29 +75,91 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
     private static final String DURATION_LONG = "long";
 
-    private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 99;
+    private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 1;
+    private static final int MY_PERMISSION_ACCESS_BLUETOOTH = 2;
+
+    String [] permissionsLocation = { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+    String [] permissionsBluetooth = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN };
+
+
 
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
         super.onRequestPermissionResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(cordova.getActivity(),
-                        "Location Permission is required for navigation!",
-                        Toast.LENGTH_LONG).show();
+        if (requestCode == MY_PERMISSION_ACCESS_COARSE_LOCATION) {
+
+            for(int i=0; i<grantResults.length; i++){
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(cordova.getActivity(),
+                            "Location Permission is required for access!",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+        if (requestCode == MY_PERMISSION_ACCESS_BLUETOOTH) {
+            for(int i=0; i<grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(cordova.getActivity(),
+                            "Bluetooth Permission is required for access!",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
 
-    private void checkStatusBluetooth() {
+    public boolean hasPermisssionBluetooth() {
+
+        for(String p : permissionsBluetooth)
+        {
+            if(!PermissionHelper.hasPermission(this, p))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean hasPermisssionLocation() {
+        for(String p : permissionsLocation)
+        {
+            if(!PermissionHelper.hasPermission(this, p))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isEnableBluetooth() {
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (!bluetoothAdapter.isEnabled()) {
-                bluetoothAdapter.enable();
+                new AlertDialog.Builder(cordova.getContext())
+                        .setTitle("Enable Bluetooth")
+                        .setMessage("This feature need Bluetooth! Please enable bluetooth and retry.")
+                        .setPositiveButton("enable", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bluetoothAdapter.enable();
+
+                     }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+                return false;
             }
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
+
     }
 
 
@@ -106,12 +171,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
         switch (action) {
             case INIT:
-
-                pd = new ProgressDialog(cordova.getContext());
-                //pd.setTitle(R.string.SendBadgePDTitle);
-                pd.setMessage("BLE INIT");
-
-                if (args != null && args.length() > 0) {
+                   if (args != null && args.length() > 0) {
                     try {
                         timeoutScan = args.getLong(0);
                         if (args.length() > 1) {
@@ -132,12 +192,12 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
                 init(INIT);
 
+
                 pluginResult = getPluginResult(PluginResult.Status.OK);
                 callbackContext.sendPluginResult(pluginResult);
                 break;
 
             case SCAN:
-                //checkStatusBluetooth();
 
 
                 boolean isUsingFakeDevice = false;
@@ -236,19 +296,18 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 sender.setBleListener(new BLESendListener() {
                     @Override
                     public void onBLEReaderDisconnected() {
-
                         sendPD(false, "BLE Send in progress");
-
-
+                        bleScan.stopBLEScanning();
                     }
 
                     @Override
                     public void onSendBadgeCompleted() {
                         result.setSuccess(true);
                         result.setMessage("Badge sended");
+                        sendPD(false, "BLE Send in progress");
+                        bleScan.stopBLEScanning();
                         callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
 
-                        sendPD(false, "BLE Send in progress");
                     }
 
                     @Override
@@ -305,6 +364,30 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                     "To set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))");
             return false;
         }
+
+        if(!isEnableBluetooth()){
+            result.setSuccess(false);
+            result.setMessage("Bluetooth disable");
+            return false;
+
+        };
+
+        if(!hasPermisssionBluetooth()){
+            result.setSuccess(false);
+            result.setMessage("Permission Bluetooth disable");
+            PermissionHelper.requestPermissions(this,MY_PERMISSION_ACCESS_BLUETOOTH, permissionsBluetooth);
+            return false;
+
+        }
+        if(!hasPermisssionLocation()){
+            result.setSuccess(false);
+            result.setMessage("Permission Location disable");
+            PermissionHelper.requestPermissions(this,MY_PERMISSION_ACCESS_COARSE_LOCATION, permissionsLocation);
+            return false;
+
+        }
+
+
         result.setSuccess(true);
 
         return true;
@@ -357,6 +440,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     }
 
 
+
     private boolean checkPermission(boolean withAsk) {
         boolean allPermitted = true;
 
@@ -365,14 +449,14 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             if (withAsk)
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                        MY_PERMISSION_ACCESS_COARSE_LOCATION);
             allPermitted = false;
         } else {
             if (!selfPermissionGranted(ACCESS_FINE_LOCATION)) {
                 if (withAsk)
                     ActivityCompat.requestPermissions(activity,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+                            MY_PERMISSION_ACCESS_COARSE_LOCATION);
                 allPermitted = false;
             }
         }
