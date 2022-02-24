@@ -1,4 +1,6 @@
 dependencies {
     implementation files("../app/src/main/libs/zblelib-release.aar")
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'pub.devrel:easypermissions:3.0.0'
+
 }

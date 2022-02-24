@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
+import pub.devrel.easypermissions.EasyPermissions;
 import zucchettiaxess.zreader.zblelib.Lib.AppsUtility.ErrorInfo;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeacon;
 import zucchettiaxess.zreader.zblelib.Lib.HWIntegration.BLEBeaconListener;
@@ -82,11 +83,15 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 1;
     private static final int MY_PERMISSION_ACCESS_BLUETOOTH = 2;
+    private static final int MY_PERMISSION_ACCESS_BLUETOOTH_S = 3;
+
+
 
     String[] permissionsLocation = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     String[] permissionsBluetooth = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
 
     private CallbackContext callback;
+    public static final String[] BLUETOOTH_PERMISSIONS_S = {"android.permission.BLUETOOTH_SCAN", "android.permission.BLUETOOTH_CONNECT"} ;
 
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
@@ -111,6 +116,22 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 }
             }
         }
+
+        if (requestCode == MY_PERMISSION_ACCESS_BLUETOOTH_S) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    result.setSuccess(false);
+                    result.setMessage(result.getMessage() + " -- " + "Bluetooth Permission is required for access! " + permissions[i]);
+                    Toast.makeText(cordova.getActivity(),
+                            "Bluetooth Permission is required for access! " + permissions[i],
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+            callback.sendPluginResult(getPluginResult(result.isSuccess() ? PluginResult.Status.OK : PluginResult.Status.ERROR));
+
+        }
+
+
     }
 
     public boolean hasPermisssionBluetooth() {
@@ -184,6 +205,9 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
     }
 
+
+
+
     @Override
     public boolean execute(String action, JSONArray args,
                            final CallbackContext callbackContext) {
@@ -195,8 +219,18 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             case BLUETOOTH:
                 result = new Result();
                 result.setMethod(BLUETOOTH);
-
                 try {
+                    result.setSdkVersion(mainContext.getApplicationContext().getApplicationInfo().targetSdkVersion);
+
+                    if(result.getSdkVersion()>30){
+                        if (Build.VERSION.SDK_INT > 30) {
+                            if (!EasyPermissions.hasPermissions(cordova.getContext(), BLUETOOTH_PERMISSIONS_S)) {
+                                EasyPermissions.requestPermissions(cordova.getActivity(), "message scan or connect", MY_PERMISSION_ACCESS_BLUETOOTH_S,BLUETOOTH_PERMISSIONS_S);
+                            }
+                        }
+                    }
+
+
 
                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
