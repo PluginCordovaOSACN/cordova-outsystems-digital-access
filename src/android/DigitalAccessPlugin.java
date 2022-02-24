@@ -86,6 +86,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     String[] permissionsLocation = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     String[] permissionsBluetooth = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
 
+    private CallbackContext callback;
 
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
@@ -170,10 +171,15 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
         if (resultCode == RESULT_OK) {
             Toast.makeText(webView.getContext(), "Bluetooth is ON", Toast.LENGTH_SHORT).show();
+            result.setMessage("Bluetooth is ON");
+            callback.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+
 
         } else if (resultCode == RESULT_CANCELED) {
             Toast.makeText(webView.getContext(), "Bluetooth operation is cancelled",
                     Toast.LENGTH_SHORT).show();
+            result.setMessage("Bluetooth operation is cancelled");
+            callback.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
         }
 
     }
@@ -183,6 +189,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                            final CallbackContext callbackContext) {
 
         PluginResult pluginResult;
+        callback = callbackContext;
 
         switch (action) {
             case BLUETOOTH:
@@ -193,7 +200,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-                    if(bluetoothAdapter == null){
+                    if (bluetoothAdapter == null) {
                         result.setSuccess(false);
                         result.setMessage("This device doesn't support Bluetooth");
                         callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
@@ -203,8 +210,8 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
                     if (!bluetoothAdapter.isEnabled()) {
                         Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        cordova.getActivity().startActivityForResult(bluetoothIntent,MY_PERMISSION_ACCESS_BLUETOOTH);
-                    }else{
+                        cordova.startActivityForResult(this, bluetoothIntent, MY_PERMISSION_ACCESS_BLUETOOTH);
+                    } else {
                         result.setMessage("This device support Bluetooth");
                         callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
                     }
@@ -220,8 +227,6 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
 
                 }
-
-                callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
 
 
                 break;

@@ -24,7 +24,7 @@
                 <param name="android-package" value="com.cordova.plugin.access.DigitalAccessPlugin"/>
             </feature>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/*">
+        <config-file after="uses-permission" target="AndroidManifest.xml" parent="/*">
                 <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
                 <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
                 <uses-permission android:name="android.permission.BLUETOOTH" />
