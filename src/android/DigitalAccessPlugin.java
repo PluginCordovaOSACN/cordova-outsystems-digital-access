@@ -2,6 +2,8 @@ package com.cordova.plugin.access;
 // The native Toast API
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static java.security.AccessController.getContext;
 
 import android.Manifest;
@@ -12,6 +14,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
@@ -54,6 +57,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     private final String SEND = "send";
     private final String STOP = "stop";
     private final String BLUETOOTH_ERROR = "bluetoothError";
+    private final String BLUETOOTH = "checkBluetooth";
 
     private final int dbMinDistance = 40;
     private final int dbMaxDistance = 110;
@@ -160,12 +164,68 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+
+        if (resultCode == RESULT_OK) {
+            Toast.makeText(webView.getContext(), "Bluetooth is ON", Toast.LENGTH_SHORT).show();
+
+        } else if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(webView.getContext(), "Bluetooth operation is cancelled",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
     public boolean execute(String action, JSONArray args,
                            final CallbackContext callbackContext) {
 
         PluginResult pluginResult;
 
         switch (action) {
+            case BLUETOOTH:
+                result = new Result();
+                result.setMethod(BLUETOOTH);
+
+                try {
+
+                    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+                    if(bluetoothAdapter == null){
+                        result.setSuccess(false);
+                        result.setMessage("This device doesn't support Bluetooth");
+                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+                        return true;
+                    }
+
+
+                    if (!bluetoothAdapter.isEnabled()) {
+                        Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        cordova.getActivity().startActivityForResult(bluetoothIntent,MY_PERMISSION_ACCESS_BLUETOOTH);
+                    }else{
+                        result.setMessage("This device support Bluetooth");
+                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+                    }
+
+                } catch (Exception e) {
+                    if (result == null) {
+                        result = new Result();
+                        result.setMethod(INIT);
+                    }
+                    result.setSuccess(false);
+                    result.setMessage(e.getMessage());
+                    callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+
+
+                }
+
+                callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+
+
+                break;
+
             case BLUETOOTH_ERROR:
                 String nameMethod = "";
                 if (args != null && args.length() > 0) {

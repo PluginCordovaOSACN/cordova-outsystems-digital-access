@@ -22,7 +22,10 @@
  DigitalAccessPlugin.prototype.init = function(successCallback, errorCallback, timeoutScan, dbDistance, building, badgeCode) {
   cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'init', [timeoutScan, dbDistance, building, badgeCode ]);    
  }
- 
+
+ DigitalAccessPlugin.prototype.checkBluetooth = function(successCallback, errorCallback) {
+  cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'checkBluetooth',[]);
+}
  
  // Installation constructor that binds DigitalAccessPlugin to window
  DigitalAccessPlugin.install = function() {
