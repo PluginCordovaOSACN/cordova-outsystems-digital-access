@@ -220,35 +220,35 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 result = new Result();
                 result.setMethod(BLUETOOTH);
                 try {
-                    result.setSdkVersion(mainContext.getApplicationContext().getApplicationInfo().targetSdkVersion);
 
-                    if(result.getSdkVersion()>30){
-                        if (Build.VERSION.SDK_INT > 30) {
-                            if (!EasyPermissions.hasPermissions(cordova.getContext(), BLUETOOTH_PERMISSIONS_S)) {
-                                EasyPermissions.requestPermissions(cordova.getActivity(), "message scan or connect", MY_PERMISSION_ACCESS_BLUETOOTH_S,BLUETOOTH_PERMISSIONS_S);
+                        result.setSdkVersion(cordova.getContext().getApplicationContext().getApplicationInfo().targetSdkVersion);
+
+                        if (result.getSdkVersion() > 30) {
+                            if (Build.VERSION.SDK_INT > 30) {
+                                if (!EasyPermissions.hasPermissions(cordova.getContext(), BLUETOOTH_PERMISSIONS_S)) {
+                                    EasyPermissions.requestPermissions(cordova.getActivity(), "message scan or connect", MY_PERMISSION_ACCESS_BLUETOOTH_S, BLUETOOTH_PERMISSIONS_S);
+                                }
                             }
                         }
-                    }
 
 
+                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-                    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (bluetoothAdapter == null) {
+                            result.setSuccess(false);
+                            result.setMessage("This device doesn't support Bluetooth");
+                            callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
 
-                    if (bluetoothAdapter == null) {
-                        result.setSuccess(false);
-                        result.setMessage("This device doesn't support Bluetooth");
-                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
-                        return true;
-                    }
+                        }
 
 
-                    if (!bluetoothAdapter.isEnabled()) {
-                        Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        cordova.startActivityForResult(this, bluetoothIntent, MY_PERMISSION_ACCESS_BLUETOOTH);
-                    } else {
-                        result.setMessage("This device support Bluetooth");
-                        callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
-                    }
+                        if (!bluetoothAdapter.isEnabled()) {
+                            Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                            cordova.startActivityForResult(this, bluetoothIntent, MY_PERMISSION_ACCESS_BLUETOOTH);
+                        } else {
+                            result.setMessage("This device support Bluetooth");
+                            callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+                        }
 
                 } catch (Exception e) {
                     if (result == null) {
