@@ -16,6 +16,16 @@ public class Result {
     private String location;
     private boolean isTimeout;
 
+   private int sdkVersion;
+
+    public int getSdkVersion() {
+        return sdkVersion;
+    }
+
+    public void setSdkVersion(int sdkVersion) {
+        this.sdkVersion = sdkVersion;
+    }
+    
     public boolean isTimeout() {
         return isTimeout;
     }
