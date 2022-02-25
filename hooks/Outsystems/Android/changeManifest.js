@@ -11,15 +11,19 @@ module.exports = function (context) {
     var Q = require("q");
     var deferral = new Q.defer();
 
-
     var manifestContent = fs.readFileSync(constants.manifestPath, {encoding:'utf8'});
-
     
-    manifestContent = manifestContent.replace("android:maxSdkVersion","");
-    manifestContent = manifestContent.replace("android:maxSdkVersion","");
+    if(manifestContent.indexOf("maxSdkVersion") > -1){
+        console.log("Found maxSdKVersion");
+        console.log("indexOfMax " + manifestContent.indexOf("android:maxSdkVersion=\"30"));
 
-  
+        manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
+        manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
+        
+        console.log("indexOfMax2 " + manifestContent.indexOf("android:maxSdkVersion=\"30"));
 
+        console.log(manifestContent.toString());
+    }
 
     fs.writeFileSync(constants.manifestPath, manifestContent);
     
