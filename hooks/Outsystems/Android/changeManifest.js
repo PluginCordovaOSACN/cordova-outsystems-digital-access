@@ -22,8 +22,8 @@ module.exports = function (context) {
         
         console.log("indexOfMax2 " + manifestContent.indexOf("android:maxSdkVersion=\"30"));
 
-        console.log(manifestContent.toString());
     }
+    console.log(manifestContent.toString());
 
     fs.writeFileSync(constants.manifestPath, manifestContent);
     
