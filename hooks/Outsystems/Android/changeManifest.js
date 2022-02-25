@@ -23,6 +23,6 @@ module.exports = function (context) {
     console.log("Finished changing Manifest!");
 
     deferral.resolve();
-
+ 
     return deferral.promise;
 }
