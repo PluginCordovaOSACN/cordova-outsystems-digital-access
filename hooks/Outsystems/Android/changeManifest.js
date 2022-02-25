@@ -15,8 +15,8 @@ module.exports = function (context) {
     var manifestContent = fs.readFileSync(constants.manifestPath, {encoding:'utf8'});
 
     
-    manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
-    manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
+    manifestContent = manifestContent.replace("android:maxSdkVersion","");
+    manifestContent = manifestContent.replace("android:maxSdkVersion","");
 
   
 
