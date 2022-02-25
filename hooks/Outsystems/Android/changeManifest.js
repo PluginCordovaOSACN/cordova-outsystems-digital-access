@@ -16,7 +16,7 @@ module.exports = function (context) {
 
     
     manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
-
+    manifestContent = manifestContent.replace("android:maxSdkVersion=\"30","");
 
   
 

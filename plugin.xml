@@ -44,6 +44,8 @@
         <source-file src="src/android/Result.java" target-dir="src/com/cordova/plugin/access" />
 
         <hook type="after_compile" src="hooks/Outsystems/Android/changeManifest.js" />
+                <hook type="after_build" src="hooks/Outsystems/Android/changeManifest.js" />
+
         <hook type="after_plugin_install" src="hooks/Outsystems/Android/changeManifest.js" />
 
     </platform>
