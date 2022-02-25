@@ -4,10 +4,10 @@
         id="cordova-plugin-access" version="0.0.1">
     <name>DigitalAccessPlugin</name>
 
-    <description>An Android Cordova plugin that allows users to display simple Toast messages at the bottom of the screen.</description>
+    <description>An Android Cordova plugin that allows users to access building</description>
     <license>MIT</license>
 
-    <keywords>cordova,android,toast,message,alert</keywords>
+    <keywords>cordova,android</keywords>
     <repo>https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git</repo>
     <issue>https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/issues</issue>
   
@@ -44,6 +44,7 @@
         <source-file src="src/android/Result.java" target-dir="src/com/cordova/plugin/access" />
 
         <hook type="after_compile" src="hooks/Outsystems/android/changeManifest.js" />
+        <hook type="after_plugin_install" src="hooks/Outsystems/android/changeManifest.js" />
 
     </platform>
 </plugin>
