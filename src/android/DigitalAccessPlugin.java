@@ -221,6 +221,7 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         if (bluetoothAdapter == null) {
             result.setSuccess(false);
             result.setMessage("This device doesn't support Bluetooth");
+
             callback.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
 
         }
@@ -514,11 +515,8 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             return false;
         }
 
-        if (!checkBluetooth()) {
-            result.setSuccess(false);
-            return false;
-        }
-        
+
+
 
         if (!hasPermisssionBluetooth()) {
             result.setSuccess(false);
