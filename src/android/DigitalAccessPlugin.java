@@ -9,7 +9,6 @@ import static java.security.AccessController.getContext;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -77,7 +76,6 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
     private final String fakeDevice = "FakeDevice";
 
-    private static ProgressDialog pd;
 
     private static final String DURATION_LONG = "long";
 
@@ -86,12 +84,11 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     private static final int MY_PERMISSION_ACCESS_BLUETOOTH_S = 3;
 
 
-
     String[] permissionsLocation = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
     String[] permissionsBluetooth = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
 
     private CallbackContext callback;
-    public static final String[] BLUETOOTH_PERMISSIONS_S = {"android.permission.BLUETOOTH_SCAN", "android.permission.BLUETOOTH_CONNECT"} ;
+    public static final String[] BLUETOOTH_PERMISSIONS_S = {"android.permission.BLUETOOTH_SCAN", "android.permission.BLUETOOTH_CONNECT"};
 
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
@@ -153,38 +150,39 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         return true;
     }
 
-    private boolean isEnableBluetooth() {
-        try {
-            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (!bluetoothAdapter.isEnabled()) {
-                new AlertDialog.Builder(cordova.getContext())
-                        .setTitle("Enable Bluetooth")
-                        .setMessage("This feature need Bluetooth! Please enable bluetooth and retry.")
-                        .setPositiveButton("enable", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bluetoothAdapter.enable();
+    /*
+        private boolean isEnableBluetooth() {
+            try {
+                BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (!bluetoothAdapter.isEnabled()) {
+                    new AlertDialog.Builder(cordova.getContext())
+                            .setTitle("Enable Bluetooth")
+                            .setMessage("This feature need Bluetooth! Please enable bluetooth and retry.")
+                            .setPositiveButton("enable", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bluetoothAdapter.enable();
 
-                            }
-                        })
-                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-                return false;
+                                }
+                            })
+                            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create().show();
+                    return false;
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+            return false;
+
         }
-        return false;
 
-    }
-
-
+    */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -206,7 +204,38 @@ public class DigitalAccessPlugin extends CordovaPlugin {
     }
 
 
+    private boolean checkBluetooth() {
+        result.setSdkVersion(cordova.getContext().getApplicationContext().getApplicationInfo().targetSdkVersion);
 
+        if (result.getSdkVersion() > 30) {
+            if (Build.VERSION.SDK_INT > 30) {
+                if (!EasyPermissions.hasPermissions(cordova.getContext(), BLUETOOTH_PERMISSIONS_S)) {
+                    EasyPermissions.requestPermissions(cordova.getActivity(), "message scan or connect", MY_PERMISSION_ACCESS_BLUETOOTH_S, BLUETOOTH_PERMISSIONS_S);
+                }
+            }
+        }
+
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (bluetoothAdapter == null) {
+            result.setSuccess(false);
+            result.setMessage("This device doesn't support Bluetooth");
+            callback.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
+
+        }
+
+
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            cordova.startActivityForResult(this, bluetoothIntent, MY_PERMISSION_ACCESS_BLUETOOTH);
+        } else {
+            result.setMessage("This device support Bluetooth");
+            callback.sendPluginResult(getPluginResult(PluginResult.Status.OK));
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean execute(String action, JSONArray args,
@@ -220,40 +249,13 @@ public class DigitalAccessPlugin extends CordovaPlugin {
                 result = new Result();
                 result.setMethod(BLUETOOTH);
                 try {
+                    checkBluetooth();
 
-                        result.setSdkVersion(cordova.getContext().getApplicationContext().getApplicationInfo().targetSdkVersion);
-
-                        if (result.getSdkVersion() > 30) {
-                            if (Build.VERSION.SDK_INT > 30) {
-                                if (!EasyPermissions.hasPermissions(cordova.getContext(), BLUETOOTH_PERMISSIONS_S)) {
-                                    EasyPermissions.requestPermissions(cordova.getActivity(), "message scan or connect", MY_PERMISSION_ACCESS_BLUETOOTH_S, BLUETOOTH_PERMISSIONS_S);
-                                }
-                            }
-                        }
-
-
-                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-                        if (bluetoothAdapter == null) {
-                            result.setSuccess(false);
-                            result.setMessage("This device doesn't support Bluetooth");
-                            callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.ERROR));
-
-                        }
-
-
-                        if (!bluetoothAdapter.isEnabled()) {
-                            Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                            cordova.startActivityForResult(this, bluetoothIntent, MY_PERMISSION_ACCESS_BLUETOOTH);
-                        } else {
-                            result.setMessage("This device support Bluetooth");
-                            callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
-                        }
 
                 } catch (Exception e) {
                     if (result == null) {
                         result = new Result();
-                        result.setMethod(INIT);
+                        result.setMethod(BLUETOOTH);
                     }
                     result.setSuccess(false);
                     result.setMessage(e.getMessage());
@@ -425,7 +427,6 @@ public class DigitalAccessPlugin extends CordovaPlugin {
 
                     BLESend sender;
                     sender = new BLESend(cordova.getContext());
-                    sendPD(true, "BLE Send in progress");
 
                     sender.sendBadgeToBle(BLEScan.getDevicesArray().get(0), mainErrorInfo, Dir_Type.DIR_IN);
                     sender.setBleListener(new BLESendListener() {
@@ -513,21 +514,19 @@ public class DigitalAccessPlugin extends CordovaPlugin {
             return false;
         }
 
-        if (!isEnableBluetooth()) {
+        if (!checkBluetooth()) {
             result.setSuccess(false);
-            result.setMessage("Bluetooth disable");
             return false;
-
         }
-        ;
+        
 
         if (!hasPermisssionBluetooth()) {
             result.setSuccess(false);
             result.setMessage("Permission Bluetooth disable");
             PermissionHelper.requestPermissions(this, MY_PERMISSION_ACCESS_BLUETOOTH, permissionsBluetooth);
             return false;
-
         }
+
         if (!hasPermisssionLocation()) {
             result.setSuccess(false);
             result.setMessage("Permission Location disable");
@@ -570,16 +569,6 @@ public class DigitalAccessPlugin extends CordovaPlugin {
         });
 
 
-    }
-
-    public static void sendPD(boolean start, String string) {
-        if (start) {
-            pd.show();
-            pd.setMessage(string);
-            pd.setCancelable(false);
-        } else {
-            pd.dismiss();
-        }
     }
 
 
