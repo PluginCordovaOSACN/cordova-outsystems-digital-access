@@ -1,0 +1,517 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
+// swift-module-flags: -target arm64-apple-ios12.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ZAxessBLELibrarySaipem
+import CoreBluetooth
+import Foundation
+import Swift
+import UIKit
+import ZAxessCommonObjects
+import ZAxessCryptoFramework
+import _Concurrency
+import os
+public enum LogLevelEnum : Swift.Int {
+  case debug
+  case information
+  case warning
+  case error
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public class ZLogWriter {
+  public enum LogWriterType : Swift.Int {
+    case console
+    case asl
+    case file
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public init(type: ZAxessBLELibrarySaipem.ZLogWriter.LogWriterType, name: Swift.String)
+  public var name: Swift.String {
+    get
+  }
+  public func setName(_ name: Swift.String)
+  public func writeLog(_ item: ZAxessBLELibrarySaipem.ZLoggingEventData)
+  public static func getLogPath() -> Foundation.URL
+  public static func getLogPathSecond() -> Foundation.URL
+  @objc deinit
+}
+public class ZLogger {
+  public static var verbosity: ZAxessBLELibrarySaipem.LogLevelEnum
+  public static var isInitilized: Swift.Bool
+  public init()
+  public func addWriter(_ writer: ZAxessBLELibrarySaipem.ZLogWriter)
+  public func removeWriter(_ writerName: Swift.String)
+  public func debug(_ message: Swift.String, class_obj: Any, method: Swift.String = #function)
+  public func info(_ message: Swift.String, class_obj: Any, method: Swift.String = #function)
+  public func warning(_ message: Swift.String, class_obj: Any, method: Swift.String = #function)
+  public func error(_ message: Swift.String, class_obj: Any, method: Swift.String = #function)
+  @available(*, deprecated, message: "Use new function declaration to automate the passing arguments of class name and function name")
+  public func debug(_ message: Swift.String, class_name: Swift.String, method: Swift.String)
+  @available(*, deprecated, message: "Use new function declaration to automate the passing arguments of class name and function name")
+  public func info(_ message: Swift.String, class_name: Swift.String, method: Swift.String)
+  @available(*, deprecated, message: "Use new function declaration to automate the passing arguments of class name and function name")
+  public func warning(_ message: Swift.String, class_name: Swift.String, method: Swift.String)
+  @available(*, deprecated, message: "Use new function declaration to automate the passing arguments of class name and function name")
+  public func error(_ message: Swift.String, class_name: Swift.String, method: Swift.String)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class ZLogLocation {
+  public func getClassName() -> Swift.String
+  public func getMethodName() -> Swift.String
+  @objc deinit
+}
+public class ZLoggingEventData {
+  public init(description: Swift.String, level: Swift.Int, location: ZAxessBLELibrarySaipem.ZLogLocation)
+  public func getLevel() -> Swift.Int
+  public func getDescription() -> Swift.String
+  public func getLocation() -> ZAxessBLELibrarySaipem.ZLogLocation
+  @objc deinit
+}
+extension ZAxessBLELibrarySaipem.ZBTDeviceManager : CoreBluetooth.CBCentralManagerDelegate {
+  @objc dynamic public func centralManagerDidUpdateState(_ central: CoreBluetooth.CBCentralManager)
+  @objc dynamic public func centralManager(_ central: CoreBluetooth.CBCentralManager, didDiscover peripheral: CoreBluetooth.CBPeripheral, advertisementData: [Swift.String : Any], rssi RSSI: Foundation.NSNumber)
+  @objc dynamic public func centralManager(_ central: CoreBluetooth.CBCentralManager, willRestoreState dict: [Swift.String : Any])
+  @objc dynamic public func centralManager(_ central: CoreBluetooth.CBCentralManager, didConnect peripheral: CoreBluetooth.CBPeripheral)
+  @objc dynamic public func centralManager(_ central: CoreBluetooth.CBCentralManager, didDisconnectPeripheral peripheral: CoreBluetooth.CBPeripheral, error: Swift.Error?)
+}
+extension ZAxessBLELibrarySaipem.ZBTDeviceManager : CoreBluetooth.CBPeripheralDelegate {
+  @objc dynamic public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didDiscoverServices error: Swift.Error?)
+  @objc dynamic public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didDiscoverCharacteristicsFor service: CoreBluetooth.CBService, error: Swift.Error?)
+  @objc dynamic public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didUpdateValueFor characteristic: CoreBluetooth.CBCharacteristic, error: Swift.Error?)
+  @objc dynamic public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didUpdateNotificationStateFor characteristic: CoreBluetooth.CBCharacteristic, error: Swift.Error?)
+  @objc dynamic public func peripheral(_ peripheral: CoreBluetooth.CBPeripheral, didWriteValueFor characteristic: CoreBluetooth.CBCharacteristic, error: Swift.Error?)
+}
+public enum ZBLEBadgeError : Swift.Error {
+  case wrongCustomBadgeFormat(Swift.String)
+}
+@_hasMissingDesignatedInitializers public class ZBLEBadge {
+  public enum Direction : Swift.Int {
+    case OUT
+    case IN
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public var direction: ZAxessBLELibrarySaipem.ZBLEBadge.Direction
+  public init()
+  public init(badgecode: Swift.UInt64, direction: ZAxessBLELibrarySaipem.ZBLEBadge.Direction, dirmode: ZAxessBLELibrarySaipem.DirMode?) throws
+  public static func getBadgeDevice(dirmode: ZAxessBLELibrarySaipem.DirMode?) -> ZAxessBLELibrarySaipem.ZBLEBadge?
+  public static func getBadgeDevice() -> ZAxessBLELibrarySaipem.ZBLEBadge?
+  public static func getRegisteredDevice(_ registeredKey: Swift.String) -> ZAxessBLELibrarySaipem.ZBLEBadge?
+  public static func getRegisteredDevice(_ registeredKey: Swift.String, dirmode: ZAxessBLELibrarySaipem.DirMode?) -> ZAxessBLELibrarySaipem.ZBLEBadge?
+  public var codeStr: Swift.String {
+    get
+  }
+  public var codeStrWithDir: Swift.String {
+    get
+  }
+  @objc deinit
+}
+@objc public protocol ZBluetoothLEDeviceDelegate : ObjectiveC.NSObjectProtocol {
+  @objc optional func distanceUpdated(newDistanceMeter: Foundation.NSNumber)
+  @objc optional func distanceUpdated(RSSI: Foundation.NSNumber, distance: Foundation.NSNumber)
+  @objc optional func distanceUpdated(avgvalue: Foundation.NSNumber)
+  @objc optional func advValuesUpdated()
+  @objc optional func macValidated(mac: Swift.String)
+}
+public enum DirMode : Swift.Int {
+  case DM_OUT_ONLY
+  case DM_RFU_1
+  case DM_RFU_2
+  case DM_IN_OR_OUT
+  case DM_OUT_IN
+  case DM_IN_OUT
+  case DM_IN_ONLY
+  public init?(valueToDecode: Swift.Int)
+  public func description() -> Swift.String
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum IconsSide : Swift.Int {
+  case LEFT
+  case RIGHT
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum CryptoTypes : Swift.Int {
+  case NONE
+  case AES
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public enum ZAxessBLEBeaconValidationError : Swift.Int {
+  case NONE
+  case ZBEACON_DATA_CORRUPTED
+  case ZBEACON_CLONED
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public class ZBluetoothLEDevice : Swift.Equatable {
+  public static func == (lhs: ZAxessBLELibrarySaipem.ZBluetoothLEDevice, rhs: ZAxessBLELibrarySaipem.ZBluetoothLEDevice) -> Swift.Bool
+  public static let DEVICE_SENDING_USER_INFO_NAME: Swift.String
+  public static let BADGE_SENT_USER_INFO_NAME: Swift.String
+  public static let BADGE_SENT_NOTIFICATION_NAME: Swift.String
+  public static let BADGE_ERROR_NOTIFICATION_NAME: Swift.String
+  public var isEditing: Swift.Bool
+  public var delegate: ZAxessBLELibrarySaipem.ZBluetoothLEDeviceDelegate?
+  public var isAlive: Swift.Bool {
+    get
+  }
+  public var distance: Foundation.NSNumber {
+    get
+  }
+  public var lastSending: Swift.UInt64 {
+    get
+  }
+  public var deviceType: ZAxessBLELibrarySaipem.ZAxessBLEReaderTypes {
+    get
+  }
+  public var isEncrypted: Swift.Bool {
+    get
+  }
+  public var peripheral: CoreBluetooth.CBPeripheral {
+    get
+  }
+  public var id: Foundation.UUID {
+    get
+  }
+  public var order: Swift.Int {
+    get
+  }
+  public var description: Swift.String {
+    get
+    set
+  }
+  public var password: Swift.String {
+    get
+    set
+  }
+  public var isFavorite: Swift.Bool {
+    get
+    set
+  }
+  public var dirModeSaved: ZAxessBLELibrarySaipem.DirMode? {
+    get
+    set
+  }
+  public var deviceInfo: Swift.String {
+    get
+  }
+  public var isCustomDescr: Swift.Bool {
+    get
+    set
+  }
+  public var isCustomPassword: Swift.Bool {
+    get
+    set
+  }
+  public var BLEUnit: ZAxessBLELibrarySaipem.ZBTDeviceManager {
+    get
+  }
+  public var iconsVisible: Swift.Bool {
+    get
+  }
+  public var reverseIcons: Swift.Bool {
+    get
+  }
+  public var meterDistance: Foundation.NSNumber {
+    get
+  }
+  public var dirMode: ZAxessBLELibrarySaipem.DirMode? {
+    get
+  }
+  public var isCloseEnough: Swift.Bool {
+    get
+  }
+  public var isCloseEnoughBK: Swift.Bool {
+    get
+    set
+  }
+  public var isEnabled: Swift.Bool {
+    get
+  }
+  public var bckStamp: Swift.Bool {
+    get
+    set
+  }
+  public var stamp: Swift.Bool {
+    get
+    set
+  }
+  public var mac: Swift.String
+  public var minDistance: Foundation.NSNumber? {
+    get
+  }
+  public var minDistanceBK: Foundation.NSNumber? {
+    get
+  }
+  public init(id: Foundation.UUID, peripheral: CoreBluetooth.CBPeripheral, bleman: ZAxessBLELibrarySaipem.ZBTDeviceManager, parms: ZAxessBLELibrarySaipem.ZAxessBLEParameters?, order: Swift.Int, distance: Foundation.NSNumber, adv: ZAxessBLELibrarySaipem.ZBLEADVReader)
+  public func endSendingBadge(_ badge: ZAxessBLELibrarySaipem.ZBLEBadge?, iserror: Swift.Bool)
+  public func endValidationBeacon(iserror: Swift.Bool, validationerror: ZAxessBLELibrarySaipem.ZAxessBLEBeaconValidationError)
+  public func updateValues(advertisementData: ZAxessBLELibrarySaipem.ZBLEADVReader, RSSI: Foundation.NSNumber)
+  public func getDirectionByIconSide(iconSide: ZAxessBLELibrarySaipem.IconsSide) -> ZAxessBLELibrarySaipem.ZBLEBadge.Direction
+  @objc deinit
+}
+public enum ZAxessBLEReaderTypes : Swift.Int {
+  case NONE
+  case ZUCCHETTI_AXESS_READER_TYPE_1
+  case ZUCCHETTI_AXESS_READER_RFID5
+  case ZUCCHETTI_AXESS_READER_RFID5_ENCRYPTED_AES
+  case ZUCCHETTI_AXESS_READER_RFID5_ENCRYPTED_AES_BEACON
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public protocol ZBTDeviceManagerProtocol {
+  func devicesListUpdated(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func deviceRemoved(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func firstDeviceFound(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func firstDeviceFavFound(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func notifyMainViewSendingBadgeOk(_ badge: ZAxessBLELibrarySaipem.ZBLEBadge, device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func notifyMainViewSendingBadgeKO(_ badge: ZAxessBLELibrarySaipem.ZBLEBadge?, device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice?)
+  func startEditDeviceName(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func startEditDeviceDirMode(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func bluetoothBecomeAvailable()
+  func bluetoothBecomeUnavailable()
+  func foundDeviceNear(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func validatedBeacon(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  func validationErrorBeacon(_device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice, error: ZAxessBLELibrarySaipem.ZAxessBLEBeaconValidationError)
+}
+@objc @_inheritsConvenienceInitializers public class ZBTDeviceManager : ObjectiveC.NSObject {
+  public static let zbleCentralManagerId: Swift.String
+  public static var BCK_Continue: Swift.Bool
+  public static var isSending: Swift.Bool {
+    get
+    set
+  }
+  final public let sendingQueue: Dispatch.DispatchQueue
+  public var device_id: Foundation.UUID?
+  public var minPowerValue: Foundation.NSNumber?
+  public var delegate: ZAxessBLELibrarySaipem.ZBTDeviceManagerProtocol?
+  public var devicesList: [ZAxessBLELibrarySaipem.ZBluetoothLEDevice] {
+    get
+  }
+  public var deviceBKPriorityList: [ZAxessBLELibrarySaipem.ZBluetoothLEDevice] {
+    get
+  }
+  public var bluetoothEnabled: Swift.Bool? {
+    get
+  }
+  public static let UUID_SERVICE_READER: CoreBluetooth.CBUUID
+  public static let UUID_SERVICE_BEACON: CoreBluetooth.CBUUID
+  @objc override dynamic public init()
+  public func startBCKMode()
+  public func stopBCKMode()
+  public func updateDevicesList()
+  public func refreshScan(stop: Swift.Bool = true)
+  public func stopScanning()
+  public func resetDevicesList()
+  public func unlock()
+  public func sendBadge(_ id: Foundation.UUID, badge: ZAxessBLELibrarySaipem.ZBLEBadge)
+  public func validateBeacon(_ id: Foundation.UUID)
+  public func stopSending(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  public func startEditName(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  public func startEditDirMode(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice) -> Swift.Bool
+  public func removeDevice(_ device: ZAxessBLELibrarySaipem.ZBluetoothLEDevice)
+  @objc deinit
+}
+public class ZBLEADVReader : ZAxessCommonObjects.ZABLEADVObject {
+  public var customName: Swift.String? {
+    get
+  }
+  public var requiredDistance: Foundation.NSNumber? {
+    get
+  }
+  public var dirMode: ZAxessBLELibrarySaipem.DirMode? {
+    get
+  }
+  public var cryptography_type: ZAxessBLELibrarySaipem.CryptoTypes? {
+    get
+  }
+  public var background_distance: Foundation.NSNumber? {
+    get
+  }
+  public var readerType: ZAxessBLELibrarySaipem.ZAxessBLEReaderTypes {
+    get
+  }
+  public init(advertisementData: [Swift.String : Any], name: Swift.String)
+  @objc deinit
+}
+@_inheritsConvenienceInitializers open class ZAxessBLEParameters : ZAxessCommonObjects.ZXParametersBase {
+  public enum DistanceValue : Swift.Int {
+    case farther
+    case far
+    case near
+    case nearest
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public enum DirIconsMode : Swift.Int {
+    case inRight
+    case inLeft
+    case readerPos
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  public enum ParameterNames : Swift.String, Swift.CaseIterable {
+    case readAtStart
+    case readAtStartFavOnly
+    case closeAfterRead
+    case dirIcons
+    case dirIconsMode
+    case reverseDir
+    case readerDistance
+    case logEnabled
+    case notifyEnabled
+    case notifyOnBadgeSent
+    case showDistanceRuler
+    case sendBadgeLockedDevice
+    case readerDistanceBackground
+    case compatibilityMode
+    case empowerBLEsensibility
+    case bgwaitingTime
+    public init?(rawValue: Swift.String)
+    public typealias AllCases = [ZAxessBLELibrarySaipem.ZAxessBLEParameters.ParameterNames]
+    public typealias RawValue = Swift.String
+    public static var allCases: [ZAxessBLELibrarySaipem.ZAxessBLEParameters.ParameterNames] {
+      get
+    }
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public var delegate: ZAxessBLELibrarySaipem.ZAxessBLEParametersDelegate?
+  override public init()
+  convenience public init(delegate: ZAxessBLELibrarySaipem.ZAxessBLEParametersDelegate)
+  public var readAtStart: Swift.Bool {
+    get
+    set
+  }
+  public var readAtStartFavOnly: Swift.Bool {
+    get
+    set
+  }
+  public var closeAfterRead: Swift.Bool {
+    get
+    set
+  }
+  public var dirIcons: Swift.Bool {
+    get
+    set
+  }
+  public var dirIconsMode: Swift.Int {
+    get
+    set
+  }
+  public var reverseDir: Swift.Bool {
+    get
+    set
+  }
+  public var readerDistance: Swift.Int {
+    get
+    set
+  }
+  public var logEnabled: Swift.Bool {
+    get
+    set
+  }
+  public var notifyEnabled: Swift.Bool {
+    get
+    set
+  }
+  public var notifyOnBadgeSent: Swift.Bool {
+    get
+    set
+  }
+  public var showDistanceRuler: Swift.Bool {
+    get
+    set
+  }
+  public var sendBadgeLockedDevice: Swift.Bool {
+    get
+    set
+  }
+  public var readerDistanceBackground: Swift.Int {
+    get
+    set
+  }
+  public var compatibilityMode: Swift.Bool {
+    get
+    set
+  }
+  public var empowerBLEsensibility: Swift.Bool {
+    get
+    set
+  }
+  public var bgwaitingTime: Swift.Int {
+    get
+    set
+  }
+  open func writeParametersToFile()
+  open func getParametersFilePath() -> Foundation.URL
+  @objc deinit
+}
+public protocol ZAxessBLEParametersDelegate {
+  func parameterChanged<T, C>(_ newvalue: T, parameter: C)
+}
+extension ZAxessBLELibrarySaipem.LogLevelEnum : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.LogLevelEnum : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.LogLevelEnum : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZLogWriter.LogWriterType : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZLogWriter.LogWriterType : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZLogWriter.LogWriterType : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZBLEBadge.Direction : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZBLEBadge.Direction : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZBLEBadge.Direction : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.DirMode : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.DirMode : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.DirMode : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.IconsSide : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.IconsSide : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.IconsSide : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.CryptoTypes : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.CryptoTypes : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.CryptoTypes : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEBeaconValidationError : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEBeaconValidationError : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEBeaconValidationError : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEReaderTypes : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEReaderTypes : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEReaderTypes : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DistanceValue : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DistanceValue : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DistanceValue : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DirIconsMode : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DirIconsMode : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.DirIconsMode : Swift.RawRepresentable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.ParameterNames : Swift.Equatable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.ParameterNames : Swift.Hashable {}
+extension ZAxessBLELibrarySaipem.ZAxessBLEParameters.ParameterNames : Swift.RawRepresentable {}

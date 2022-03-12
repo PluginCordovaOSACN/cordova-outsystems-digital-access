@@ -1,0 +1,4 @@
+framework module ZAxessBLELibrarySaipem {
+  header "ZAxessBLELibrarySaipem-Swift.h"
+  requires objc
+}
