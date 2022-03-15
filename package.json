@@ -31,7 +31,8 @@
   "cordova": {
     "id": "cordova-outsystems-access",
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ]
   },
   "deprecated": false,
@@ -44,12 +45,6 @@
   ],
   "homepage": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/",
   "keywords": [
-    "Toast",
-    "Notification",
-    "Message",
-    "Alert",
-    "ecosystem:cordova",
-    "cordova-android"
   ],
   "license": "MIT",
   "name": "cordova-outsystems-access",

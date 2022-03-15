@@ -64,6 +64,8 @@
 		</config-file>
 
         <framework src="sdk/ios/ZAxessBLELibrarySaipem.xcframework" custom="true" embed="true"/>
+        <framework src="sdk/ios/ZAxessCommonObjects.xcframework" custom="true" embed="true"/>
+        <framework src="sdk/ios/ZAxessCryptoFramework.xcframework" custom="true" embed="true"/>
 
         <source-file src="src/ios/DigitalAccessPlugin.swift" />
         <source-file src="src/ios/Result.swift" />

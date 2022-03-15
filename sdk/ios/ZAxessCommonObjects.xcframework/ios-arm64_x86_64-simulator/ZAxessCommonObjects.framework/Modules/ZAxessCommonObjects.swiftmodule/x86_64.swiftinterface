@@ -1,0 +1,201 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
+// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ZAxessCommonObjects
+import CoreBluetooth
+import Foundation
+import Swift
+import UIKit
+@_exported import ZAxessCommonObjects
+import _Concurrency
+@objc @_inheritsConvenienceInitializers public class DispatchUtilities : ObjectiveC.NSObject {
+  public static func nowPlusInterval(second: Swift.Int) -> Dispatch.DispatchTime
+  public static func nowPlusInterval(millisecond: Swift.Int) -> Dispatch.DispatchTime
+  @objc override dynamic public init()
+  @objc deinit
+}
+open class ZXParametersBase {
+  public init()
+  open func getBoolValue(_ key: Swift.String, def: Swift.Bool) -> Swift.Bool
+  open func getIntValue(_ key: Swift.String, def: Swift.Int) -> Swift.Int
+  open func getStringValue(_ key: Swift.String, def: Swift.String) -> Swift.String
+  open func setBoolValue(_ key: Swift.String, value: Swift.Bool) -> Swift.Bool
+  open func setIntValue(_ key: Swift.String, value: Swift.Int) -> Swift.Bool
+  open func setStringValue(_ key: Swift.String, value: Swift.String) -> Swift.Bool
+  open func getParametersFilePath(fileName: Swift.String) -> Foundation.URL
+  @objc deinit
+}
+extension UIKit.UIColor {
+  convenience public init(red: Swift.Int, green: Swift.Int, blue: Swift.Int)
+  convenience public init(rgb: Swift.Int)
+}
+@_hasMissingDesignatedInitializers open class StringUtilities {
+  public static func containsIgnoreCase(src: Swift.String, what: Swift.String) -> Swift.Bool
+  public static func repeatString(_ source: Swift.String, times: Swift.Int) -> Swift.String
+  public static func lesser(str1: Swift.String, str2: Swift.String) -> Swift.Bool
+  public static func lesserEqual(str1: Swift.String, str2: Swift.String) -> Swift.Bool
+  public static func greater(str1: Swift.String, str2: Swift.String) -> Swift.Bool
+  public static func greaterEqual(str1: Swift.String, str2: Swift.String) -> Swift.Bool
+  public static func equal(str1: Swift.String, str2: Swift.String) -> Swift.Bool
+  public static func isEmpty(_ string: Swift.String?) -> Swift.Bool
+  public static func capitalize(_ str: Swift.String) -> Swift.String
+  public static func toNSNumber(_ value: Swift.String?) -> Foundation.NSNumber?
+  public static func intervalTimeInWords(hours: Swift.Int) -> Swift.String
+  @objc deinit
+}
+extension Foundation.Date {
+  public func getFormattedDate(format: Swift.String) -> Swift.String
+}
+extension Swift.String {
+  public func padding(leftTo paddedLength: Swift.Int, withPad pad: Swift.String = " ", startingAt padStart: Swift.Int = 0) -> Swift.String
+  public func padding(rightTo paddedLength: Swift.Int, withPad pad: Swift.String = " ", startingAt padStart: Swift.Int = 0) -> Swift.String
+  public func padding(sidesTo paddedLength: Swift.Int, withPad pad: Swift.String = " ", startingAt padStart: Swift.Int = 0) -> Swift.String
+  public func appendLineToURL(fileURL: Foundation.URL) throws
+  public func appendToURL(fileURL: Foundation.URL) throws
+  public func trim() -> Swift.String
+  public func equalsIgnoreCase(_ other: Swift.String) -> Swift.Bool
+  public func length() -> Swift.Int
+  public func replace(_ oldString: Swift.String, newString: Swift.String) -> Swift.String
+  public mutating func replaceAt(_ index: Swift.Int, with newCharacter: Swift.String)
+  public func toDate(stringFormat: Swift.String) -> Foundation.Date?
+  public func getBytes() -> [Swift.UInt8]
+  public func substring(_ start: Swift.Int, end: Swift.Int) -> Swift.String?
+  public func index(of target: Swift.String) -> Swift.Int?
+  public func lastIndex(of target: Swift.String) -> Swift.Int?
+}
+@objc @_inheritsConvenienceInitializers public class RSSIUtilities : ObjectiveC.NSObject {
+  public static func SPP_KFilter(beacon_rssi: Foundation.NSNumber, kFilter: Foundation.NSNumber, kFilteringFactor: Foundation.NSNumber) -> Foundation.NSNumber
+  public static func BLE_Convert_Dbm2Meter(rssi: Foundation.NSNumber) -> Foundation.NSNumber
+  @objc override dynamic public init()
+  @objc deinit
+}
+open class ZABLEADVObject {
+  public var localName: Swift.String? {
+    get
+  }
+  public var isManufacturerDataValid: Swift.Bool {
+    get
+  }
+  public var manufacturerData: Swift.String? {
+    get
+  }
+  public var connectableBool: Swift.Bool? {
+    get
+  }
+  public var powerLevel: Swift.Int? {
+    get
+  }
+  public var advertisementData: [Swift.String : Any]?
+  public init(advertisementData: [Swift.String : Any])
+  public func extractManufacturerData(from: Swift.Int, to: Swift.Int) -> Foundation.Data?
+  open func updateAdvertisementData(advertisementData: [Swift.String : Any])
+  @objc deinit
+}
+extension Swift.Bool {
+  public static func toUInt8(_ value: Swift.Bool?) -> Swift.UInt8?
+}
+@objc @_inheritsConvenienceInitializers public class CollectionUtilities : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+public struct Queue<T> {
+  public init()
+  public var count: Swift.Int {
+    get
+  }
+  public var isEmpty: Swift.Bool {
+    get
+  }
+  public mutating func enqueue(_ element: T)
+  public mutating func dequeue() -> T?
+  public var front: T? {
+    get
+  }
+}
+extension Foundation.URL {
+  public var fileSize: Swift.UInt64 {
+    get
+  }
+  public var creationDate: Foundation.Date? {
+    get
+  }
+  public func removeItem()
+  public func renameItem(destinationName: Foundation.URL)
+  public var exists: Swift.Bool {
+    get
+  }
+}
+public enum HTTP_METHOD : Swift.String {
+  case GET
+  case POST
+  case PUT
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum REST_ERROR : Swift.Int {
+  case SERVER_ERROR
+  case NOT_FOUND
+  case NO_CONNECTION
+  case GENERIC_ERROR
+  public func description() -> Swift.String
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc @_inheritsConvenienceInitializers public class HttpRESTUtils : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+public class SizedQueue<Element> {
+  public var count: Swift.Int {
+    get
+  }
+  public init(maxSize: Swift.Int)
+  public func getElementAt(_ index: Swift.Int) -> Element?
+  public func appendShifting(_ newElement: Element)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class DataUtilities {
+  @objc deinit
+}
+extension Foundation.Data {
+  public static func fromUInt16Bigendian(_ value: Swift.UInt16) -> Foundation.Data
+  public static func fromUInt8(_ value: Swift.UInt8) -> Foundation.Data
+  public func hexRepresentationWithSpaces(_ spaces: Swift.Bool, reverse: Swift.Bool = false, bigEndian: Swift.Bool = false) -> Foundation.NSString
+  public func macRepresentation(reverse: Swift.Bool = false, bigEndian: Swift.Bool = false) -> Foundation.NSString
+  public func hexRepresentation() -> Swift.String
+  public func toUint16Bigendian() -> Swift.UInt16?
+  public func toUInt8() -> Swift.UInt8?
+  public func toInt8() -> Swift.Int8?
+  public func toStringUtf8() -> Swift.String?
+}
+@objc @_inheritsConvenienceInitializers public class ConstraintUtilities : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension UIKit.NSLayoutConstraint {
+  @discardableResult
+  @_Concurrency.MainActor(unsafe) public func setMultiplier(multiplier: CoreGraphics.CGFloat) -> UIKit.NSLayoutConstraint
+}
+extension CoreBluetooth.CBPeripheral {
+  public func getService(uuid: CoreBluetooth.CBUUID) -> CoreBluetooth.CBService?
+}
+extension CoreBluetooth.CBService {
+  public func getCharacteristic(uuid: CoreBluetooth.CBUUID) -> CoreBluetooth.CBCharacteristic?
+}
+@objc @_inheritsConvenienceInitializers public class BTSettingsUtils : ObjectiveC.NSObject {
+  @discardableResult
+  public static func openAppSetting() -> Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+extension ZAxessCommonObjects.HTTP_METHOD : Swift.Equatable {}
+extension ZAxessCommonObjects.HTTP_METHOD : Swift.Hashable {}
+extension ZAxessCommonObjects.HTTP_METHOD : Swift.RawRepresentable {}
+extension ZAxessCommonObjects.REST_ERROR : Swift.Equatable {}
+extension ZAxessCommonObjects.REST_ERROR : Swift.Hashable {}
+extension ZAxessCommonObjects.REST_ERROR : Swift.RawRepresentable {}
