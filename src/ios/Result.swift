@@ -7,12 +7,12 @@ class Result: Encodable {
     var badgeCode: String?
     var deviceMac: String?
     var deviceName: String?
+    var deviceId: String?
     var dbDistance: Int
     var date: Date
     var location: String?
     var isTimeout: Bool?
     var sdkVersion: Int? //only for android
-
     init(method: String) {
         timeout = 60
         self.method = method

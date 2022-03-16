@@ -32,7 +32,6 @@ import ZAxessBLELibrarySaipem
         /*TODO check dbDistance should be > dbMinDistance and < dbMaxDistance and set success to false and add this message: 
         "db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
                     "To set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))"
-
         */
         result?.dbDistance = dbDistance
         result?.location = buildingDefault
@@ -62,7 +61,6 @@ import ZAxessBLELibrarySaipem
         if result != nil {
             result?.method = "checkBluetooth"
             //otherwise -> create result and set init
-
             //TODO return Result.success=true if bluetooth is actived otherwise ask to the user to active and after return the result
             blemanager = ZBTDeviceManager()
             blemanager.delegate = self
@@ -71,7 +69,6 @@ import ZAxessBLELibrarySaipem
                 result?.success = true
                 result?.date = Date()
                 //TODO encode the result to json
-
                 //if result.success
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             } else {
@@ -89,14 +86,12 @@ import ZAxessBLELibrarySaipem
         //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
 
 
-
     }
 
     @objc(scan:) func scan(command : CDVInvokedUrlCommand){
     
         let badgeCode = command.argument(at: 0) as! String
         let isUsingFakeDevice = command.argument(at: 1) as? Bool // not mandatory default false
-
         if result != nil {
             result?.method = "scan"
             result?.date = Date()
@@ -129,43 +124,42 @@ import ZAxessBLELibrarySaipem
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
 
-
-
     }
 
 
     @objc(send:) func send(command : CDVInvokedUrlCommand){
-    
+        
+        let badgeCode = command.argument(at: 0) as? String
+        let dir = command.argument(at: 1) as? Bool // not mandatory default false
+        let direction: ZBLEBadge.Direction = dir ?? false ? .IN : .OUT
+        
         if result != nil {
             result?.method = "send"
             result?.date = Date()
 
             //if result nill or result.timeout or result.dbdistance are nill or badgeCode nil then Result.success=false
 
-
             //simulate access with fake reader
             //if fakeDevice = result.deviceName {
                 result?.success = true
                 result?.message = "Badge sended"
             // TODO: SET ZBLEBADGE
-            //let badge: ZBLEBadge = ZBLEBadge(badgecode: result?.badgeCode, direction: ZBLEBadge.Direction.IN, dirmode: DirMode.DM_IN_OR_OUT)
-
-            //blemanager.sendBadge(<#T##id: UUID##UUID#>, badge: <#T##ZBLEBadge#>)
-            // callbackContext.sendPluginResult(getPluginResult(PluginResult.Status.OK));
-            //  }
-            //otherwise TODO use the SDK to send the badge to the device
-     
-            
-
-            //if result.success
-            commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+            do {
+                let badge =  try ZBLEBadge(badgecode: UInt64(badgeCode ?? "") ?? 0000, direction: direction, dirmode: DirMode.DM_IN_OR_OUT)
+                let deviceId = UUID(uuidString: result?.deviceId ?? "")!
+                blemanager.sendBadge(deviceId, badge: badge)
+                commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+            } catch {
+                result?.success = false
+                result?.message = error.localizedDescription
+                commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+            }
         } else {
             result = Result(method: "send")
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
         //else
         //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
-
    
     }
 
@@ -177,16 +171,12 @@ import ZAxessBLELibrarySaipem
             result?.date = Date()
 
             //TODO use the SDK to stop the scanning
-
-
-
             result?.success = true
 
             //if result.success
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             //else
             //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
-
         } else {
             result = Result(method: "stop")
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
@@ -251,6 +241,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
         if result != nil {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+            result?.deviceId = "\(device.id)"
             // TODO: SET DIRMODE
            // result?.dirMode = device.dirMode
         }
