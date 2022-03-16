@@ -50,27 +50,6 @@
 
     </platform>
 
-    <platform name="ios">
-        <config-file parent="/*" target="config.xml">
-            <feature name="DigitalAccessPlugin">
-                <param name="ios-package" value="DigitalAccessPlugin" />
-            </feature>
-        </config-file>
-
-        <preference name="USESWIFTLANGUAGEVERSION" default="5"/>
-        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
-        <config-file target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription">
-			<string>This app needs access to the bluetooth.</string>
-		</config-file>
-
-        <framework src="sdk/ios/ZAxessBLELibrarySaipem.xcframework" custom="true" embed="true"/>
-        <framework src="sdk/ios/ZAxessCommonObjects.framework" custom="true" embed="true"/>
-        <framework src="sdk/ios/ZAxessCryptoFramework.framework" custom="true" embed="true"/>
-
-        <source-file src="src/ios/DigitalAccessPlugin.swift" />
-        <source-file src="src/ios/Result.swift" />
-
-
-    </platform>
+   
 
 </plugin>
