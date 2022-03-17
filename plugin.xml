@@ -75,8 +75,8 @@
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
 			<string>This application uses location to improve your user experience.</string>
 		</config-file>
-
-        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+ 	    
+         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>
                 <string>bluetooth-central</string>
 		        <string>fetch</string>
