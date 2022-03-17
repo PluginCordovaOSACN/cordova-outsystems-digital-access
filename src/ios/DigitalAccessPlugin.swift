@@ -44,7 +44,7 @@ import ZAxessBLELibrarySaipem
         result?.success = true
         result?.date = Date()
 
-        if dbMinDistance < dbDistance && dbDistance < dbMaxDistance {
+        if dbMinDistance > dbDistance || dbDistance > dbMaxDistance {
             result?.success = false
             result?.message = "db distance is not valid. Dbdistance must be inside this range: \(dbMinDistance) NEAR to \(dbMaxDistance) FAR\nTo set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))"
 
@@ -80,6 +80,7 @@ import ZAxessBLELibrarySaipem
             }
         } else {
             result = Result(method: "checkBluetooth")
+            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method checkBluetooth"
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
         //else
@@ -121,6 +122,7 @@ import ZAxessBLELibrarySaipem
             }
         } else {
             result = Result(method: "scan")
+            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method scan"
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
 
@@ -156,6 +158,7 @@ import ZAxessBLELibrarySaipem
             }
         } else {
             result = Result(method: "send")
+            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method send"
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
         //else
@@ -179,6 +182,8 @@ import ZAxessBLELibrarySaipem
             //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         } else {
             result = Result(method: "stop")
+            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method init"
+
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
     } 
