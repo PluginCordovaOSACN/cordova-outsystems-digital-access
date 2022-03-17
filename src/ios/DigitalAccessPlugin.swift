@@ -17,6 +17,7 @@ import ZAxessBLELibrarySaipem
     
     private var resultJson: String {
         let jsonEncoder = JSONEncoder()
+            jsonEncoder.dateEncodingStrategy = .iso8601
         let jsonData = (try? jsonEncoder.encode(self.result))!
         return String(data: jsonData, encoding: String.Encoding.utf8) ?? ""
     }
