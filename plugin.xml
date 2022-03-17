@@ -75,9 +75,14 @@
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
 			<string>This application uses location to improve your user experience.</string>
 		</config-file>
-
-
-
+ 	<config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>bluetooth-central</string>
+		        <string>fetch</string>
+		        <string>location</string>
+		        <string>remote-notification</string>
+            </array>
+        </config-file>
 
         <framework src="sdk/ios/ZAxessBLELibrarySaipem.xcframework" custom="true" embed="true"/>
         <framework src="sdk/ios/ZAxessCommonObjects.xcframework" custom="true" embed="true"/>
