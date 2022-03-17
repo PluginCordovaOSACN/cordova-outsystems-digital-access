@@ -18,7 +18,7 @@ import ZAxessBLELibrarySaipem
     private var resultJson: String {
         let jsonEncoder = JSONEncoder()
         let jsonData = (try? jsonEncoder.encode(self.result))!
-        return String(data: jsonData, encoding: String.Encoding.utf16) ?? ""
+        return String(data: jsonData, encoding: String.Encoding.utf8) ?? ""
     }
 
     @objc(init:) func initialize(command : CDVInvokedUrlCommand){
