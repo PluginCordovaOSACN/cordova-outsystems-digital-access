@@ -59,9 +59,25 @@
 
         <preference name="USESWIFTLANGUAGEVERSION" default="5"/>
         <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
+        
         <config-file target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription">
-			<string>This app needs access to the bluetooth.</string>
+			<string>Bluetooth is used to communicate with Zucchetti Axess readers even if phone is locked.</string>
 		</config-file>
+
+        <config-file target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription">
+			<string>Bluetooth is used to communicate with Zucchetti Axess readers.</string>
+		</config-file>
+
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+			<string>Always mode is recommended for this app for improved location tracking.</string>
+		</config-file>
+        
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+			<string>This application uses location to improve your user experience.</string>
+		</config-file>
+
+
+
 
         <framework src="sdk/ios/ZAxessBLELibrarySaipem.xcframework" custom="true" embed="true"/>
         <framework src="sdk/ios/ZAxessCommonObjects.xcframework" custom="true" embed="true"/>
