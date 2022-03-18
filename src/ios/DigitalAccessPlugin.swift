@@ -1,6 +1,7 @@
 import Foundation
 import ZAxessCommonObjects
 import ZAxessBLELibrarySaipem
+import UIKit
 
 
 @objc(DigitalAccessPlugin) class DigitalAccessPlugin: CDVPlugin {
@@ -13,7 +14,7 @@ import ZAxessBLELibrarySaipem
     private let fakeDevice = "FakeDevice"
     
     private var blemanager: ZBTDeviceManager!
-    
+    private var dispatchGroup: DispatchGroup?
     
     private var resultJson: String {
         let jsonEncoder = JSONEncoder()
@@ -27,6 +28,9 @@ import ZAxessBLELibrarySaipem
         let dbDistance = command.argument(at: 1) as! Int
         let buildingDefault = command.argument(at: 2) as! String
         let badgeCode = command.argument(at: 3) as! String
+        
+        blemanager = ZBTDeviceManager()
+        blemanager.delegate = self
 
         result = Result(method: "init")
         result?.timeout = timeoutScan
@@ -63,8 +67,6 @@ import ZAxessBLELibrarySaipem
             result?.method = "checkBluetooth"
             //otherwise -> create result and set init
             //TODO return Result.success=true if bluetooth is actived otherwise ask to the user to active and after return the result
-            blemanager = ZBTDeviceManager()
-            blemanager.delegate = self
             if self.blemanager.bluetoothEnabled ?? false {
 
                 result?.success = true
@@ -87,7 +89,6 @@ import ZAxessBLELibrarySaipem
         //else
         //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
 
-
     }
 
     @objc(scan:) func scan(command : CDVInvokedUrlCommand){
@@ -108,16 +109,28 @@ import ZAxessBLELibrarySaipem
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             } else {
             
+                dispatchGroup = DispatchGroup()
+                dispatchGroup?.enter()
                 blemanager.updateDevicesList()
-                if result?.deviceMac != nil {
-                    result?.success = true
-                    result?.message = "Device found"
+                blemanager.refreshScan()
+                let time = Double(result?.timeout ?? 0)
+                let elapsed = dispatchGroup?.wait(timeout: .now() + time)
+                if elapsed == .success {
+                    if result?.deviceMac != nil {
+                        result?.success = true
+                        result?.message = "Device found"
 
-                    commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
-                    
+                        commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+                        
+                    } else {
+                        result?.success = false
+                        result?.message = "No device founded"
+                        result?.isTimeout = true
+                        commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+                    }
                 } else {
                     result?.success = false
-                    result?.message = "No device founded"
+                    result?.message = "Timeout of scan"
                     result?.isTimeout = true
                     commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
                 }
@@ -142,7 +155,6 @@ import ZAxessBLELibrarySaipem
             result?.date = Date()
 
             //if result nill or result.timeout or result.dbdistance are nill or badgeCode nil then Result.success=false
-
             //simulate access with fake reader
             //if fakeDevice = result.deviceName {
                 result?.success = true
@@ -198,7 +210,7 @@ import ZAxessBLELibrarySaipem
 extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func devicesListUpdated(_ device: ZBluetoothLEDevice) {
-        // ---
+        dispatchGroup?.leave()
     }
     
     func deviceRemoved(_ device: ZBluetoothLEDevice) {
@@ -227,7 +239,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func bluetoothBecomeAvailable() {
         // ---
-        blemanager?.updateDevicesList()
+//        blemanager?.updateDevicesList()
     }
     
     func bluetoothBecomeUnavailable() {
@@ -247,6 +259,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
+        dispatchGroup?.leave()
         if result != nil {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
