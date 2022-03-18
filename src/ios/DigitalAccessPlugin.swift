@@ -151,7 +151,6 @@ import ZAxessBLELibrarySaipem
             do {
                 let badge =  try ZBLEBadge(badgecode: UInt64(result?.badgeCode ?? "") ?? 0000, direction: direction, dirmode: DirMode.DM_IN_OR_OUT)
                 let deviceId = UUID(uuidString: result?.deviceId ?? "")!
-                result?.badgeCode = badge
                 
                 blemanager.sendBadge(deviceId, badge: badge)
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
