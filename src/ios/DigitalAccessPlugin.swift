@@ -98,6 +98,8 @@ import ZAxessBLELibrarySaipem
             result?.method = "scan"
             result?.date = Date()
             
+            result?.badgeCode = badgeCode
+
             if isUsingFakeDevice ?? false == true {
                 result?.success = true
                 result?.message = "FakeDevice found"
@@ -108,7 +110,6 @@ import ZAxessBLELibrarySaipem
             
                 blemanager.updateDevicesList()
                 if result?.deviceMac != nil {
-                    result?.badgeCode = badgeCode
                     result?.success = true
                     result?.message = "Device found"
 
@@ -117,7 +118,7 @@ import ZAxessBLELibrarySaipem
                 } else {
                     result?.success = false
                     result?.message = "No device founded"
-                    
+                    result?.isTimeout = true
                     commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
                 }
             }
@@ -148,8 +149,10 @@ import ZAxessBLELibrarySaipem
                 result?.message = "Badge sended"
             // TODO: SET ZBLEBADGE
             do {
-                let badge =  try ZBLEBadge(badgecode: UInt64(badgeCode ?? "") ?? 0000, direction: direction, dirmode: DirMode.DM_IN_OR_OUT)
+                let badge =  try ZBLEBadge(badgecode: UInt64(result?.badgeCode ?? "") ?? 0000, direction: direction, dirmode: DirMode.DM_IN_OR_OUT)
                 let deviceId = UUID(uuidString: result?.deviceId ?? "")!
+                result?.badgeCode = badge
+                
                 blemanager.sendBadge(deviceId, badge: badge)
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             } catch {
@@ -225,6 +228,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func bluetoothBecomeAvailable() {
         // ---
+        blemanager?.updateDevicesList()
     }
     
     func bluetoothBecomeUnavailable() {
