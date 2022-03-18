@@ -158,7 +158,7 @@ import ZAxessBLELibrarySaipem
             } catch {
                 result?.success = false
                 result?.message = error.localizedDescription
-                commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+                commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
             }
         } else {
             result = Result(method: "send")
