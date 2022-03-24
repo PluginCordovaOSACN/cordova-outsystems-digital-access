@@ -117,31 +117,33 @@ import UIKit
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             } else {
             
-                dispatchGroup = DispatchGroup()
-                dispatchGroup?.enter()
-                blemanager.refreshScan()
-                blemanager.updateDevicesList()
-                let time = Double(result?.timeout ?? 0)
-                let elapsed = dispatchGroup?.wait(timeout: .now() + time)
-                dispatchGroup = nil
-                if elapsed == .success {
-                    if result?.deviceMac != nil {
-                        result?.success = true
-                        result?.message = "Device found"
+                DispatchQueue.global(qos: .default).async {
+                    self.dispatchGroup = DispatchGroup()
+                    self.dispatchGroup?.enter()
+                    self.blemanager.refreshScan()
+                    self.blemanager.updateDevicesList()
+                    let time = Double(self.result?.timeout ?? 0)
+                    let elapsed = self.dispatchGroup?.wait(timeout: .now() + time)
+                    self.dispatchGroup = nil
+                    if elapsed == .success {
+                        if self.result?.deviceMac != nil {
+                            self.result?.success = true
+                            self.result?.message = "Device found"
 
-                        commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
-                        
+                            self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
+                            
+                        } else {
+                            self.result?.success = false
+                            self.result?.message = "No device founded"
+                            self.result?.isTimeout = true
+                            self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
+                        }
                     } else {
-                        result?.success = false
-                        result?.message = "No device founded"
-                        result?.isTimeout = true
-                        commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+                        self.result?.success = false
+                        self.result?.message = "Timeout of scan"
+                        self.result?.isTimeout = true
+                        self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
                     }
-                } else {
-                    result?.success = false
-                    result?.message = "Timeout of scan"
-                    result?.isTimeout = true
-                    commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
                 }
             }
         } else {
@@ -155,8 +157,8 @@ import UIKit
 
     @objc(send:) func send(command : CDVInvokedUrlCommand){
         
-        let badgeCode = command.argument(at: 0) as? String
-        let dir = command.argument(at: 1) as? Bool // not mandatory default false
+       
+        let dir = command.argument(at: 0) as? Bool // not mandatory default false
         let direction: ZBLEBadge.Direction = dir ?? false ? .IN : .OUT
         
         if result != nil {

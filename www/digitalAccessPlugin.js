@@ -10,8 +10,8 @@
    cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'scan', [badgeCode, isUsingFakeDevice]);
  }
  
- DigitalAccessPlugin.prototype.send = function(successCallback, errorCallback, badgeCode, isComing) {
-   cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'send', [badgeCode, isComing]);
+ DigitalAccessPlugin.prototype.send = function(successCallback, errorCallback, isComing) {
+   cordova.exec(successCallback, errorCallback, 'DigitalAccessPlugin', 'send', [isComing]);
  }
  
  DigitalAccessPlugin.prototype.stop = function(successCallback, errorCallback) {
