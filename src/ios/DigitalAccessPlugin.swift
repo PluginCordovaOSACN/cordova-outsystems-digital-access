@@ -93,9 +93,17 @@ import UIKit
 
     @objc(scan:) func scan(command : CDVInvokedUrlCommand){
     
-        let badgeCode = command.argument(at: 0) as! String
+        let badgeCode = command.argument(at: 0) as? String
         let isUsingFakeDevice = command.argument(at: 1) as? Bool // not mandatory default false
+        
         if result != nil {
+            
+            guard let badgeCode = badgeCode else {
+                result?.message = "Please set a badgeCode in the command"
+                commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
+                return
+            }
+            
             result?.method = "scan"
             result?.date = Date()
             
@@ -111,10 +119,11 @@ import UIKit
             
                 dispatchGroup = DispatchGroup()
                 dispatchGroup?.enter()
-                blemanager.updateDevicesList()
                 blemanager.refreshScan()
+                blemanager.updateDevicesList()
                 let time = Double(result?.timeout ?? 0)
                 let elapsed = dispatchGroup?.wait(timeout: .now() + time)
+                dispatchGroup = nil
                 if elapsed == .success {
                     if result?.deviceMac != nil {
                         result?.success = true
@@ -197,7 +206,7 @@ import UIKit
             //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         } else {
             result = Result(method: "stop")
-            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method init"
+            result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method stop"
 
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
@@ -210,7 +219,7 @@ import UIKit
 extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func devicesListUpdated(_ device: ZBluetoothLEDevice) {
-        dispatchGroup?.leave()
+        // ---
     }
     
     func deviceRemoved(_ device: ZBluetoothLEDevice) {
