@@ -5,14 +5,15 @@ Cordova Plugin for integrate OutSystems with digital access
 
 If you integrate this plugin with Android remove check if there are this rows:
 
-	  <uses-permission android:name="android.permission.BLUETOOTH"
-			     android:maxSdkVersion="30" />
-	    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
-			     android:maxSdkVersion="30" />
+	<uses-permission android:name="android.permission.BLUETOOTH"
+	android:maxSdkVersion="30" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+	android:maxSdkVersion="30" />
 
 if it exists should be replaced with:
-	  <uses-permission android:name="android.permission.BLUETOOTH"/>
-	    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+	<uses-permission android:name="android.permission.BLUETOOTH"/>
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
 
 
@@ -27,8 +28,8 @@ initialize the plugin
     			console.error(msg);
 		},<<timeout>>,<<DBDistance>>, <<NameBuilding>>,<<BadgeDefault>>);
 	
-Note: 	Android <<timeout>> millisencods 
-		iOS <<timeout> seconds	
+Note: 	Android timeout millisencods 
+	iOS timeout seconds	
 
 checkBluetooth
 check if the bluetooth is on
@@ -50,7 +51,7 @@ Search for the nearby Bluetooth devices
 	},<<BadgeCode>>);
 	
 Note: 
-<<badgeCode>> should be a number of 5 or 6 digits
+badgeCode should be a number of 5 or 6 digits
 !the Bluetooth must on
 
 	
@@ -65,5 +66,5 @@ Send the badge code to the Bluetooth device detected with the scan method
 	},<<IsAccessing>>);
 
 Note: 
-<<IsAccessing>>(true or false) is not mandatory for Android
+IsAccessing (true or false) is not mandatory for Android
 	
