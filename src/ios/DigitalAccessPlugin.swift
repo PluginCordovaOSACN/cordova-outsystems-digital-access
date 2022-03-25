@@ -142,7 +142,7 @@ import UIKit
                         self.result?.success = false
                         self.result?.message = "Timeout of scan"
                         self.result?.isTimeout = true
-                        self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
+                        self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
                     }
                 }
             }
