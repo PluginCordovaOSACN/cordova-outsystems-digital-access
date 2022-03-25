@@ -17,6 +17,7 @@ class Result: Encodable {
         timeout = 60
         self.method = method
         self.success = false
+        message = ""
         dbDistance = 40
         date = Date()
         self.method = method
