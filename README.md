@@ -21,11 +21,11 @@ Methods
 init
 initialize the plugin
 
-window.plugins.digitalAccessPlugin.init(function(jsonResult) {
-    console.log(jsonResult);
-}, function(error) {
-    console.error(msg);
-},<<timeout>>,<<DBDistance>>, <<NameBuilding>>,<<BadgeDefault>>);
+	window.plugins.digitalAccessPlugin.init(function(jsonResult) {
+    			console.log(jsonResult);
+		}, function(error) {
+    			console.error(msg);
+		},<<timeout>>,<<DBDistance>>, <<NameBuilding>>,<<BadgeDefault>>);
 	
 	Note: 	Android <<timeout>> millisencods 
 		iOS <<timeout> seconds	
