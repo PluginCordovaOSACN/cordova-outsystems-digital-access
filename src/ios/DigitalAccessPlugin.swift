@@ -34,17 +34,10 @@ import UIKit
 
         result = Result(method: "init")
         result?.timeout = timeoutScan
-        /*TODO check dbDistance should be > dbMinDistance and < dbMaxDistance and set success to false and add this message: 
-        "db distance is not valid. Dbdistance must be inside this range: " + dbMinDistance + " NEAR to " + dbMaxDistance + " FAR\n" +
-                    "To set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))"
-        */
+
         result?.dbDistance = dbDistance
         result?.location = buildingDefault
         result?.badgeCode = badgeCode
-     /* TODO 
-     check bluetooth actived
-     otherwise ask to the user to activated  
-*/
 
         result?.success = true
         result?.date = Date()
@@ -62,17 +55,13 @@ import UIKit
 
     @objc(checkBluetooth:) func checkBluetooth(command : CDVInvokedUrlCommand){
     
-    //if exist result
         if result != nil {
             result?.method = "checkBluetooth"
-            //otherwise -> create result and set init
-            //TODO return Result.success=true if bluetooth is actived otherwise ask to the user to active and after return the result
             if self.blemanager.bluetoothEnabled ?? false {
 
                 result?.success = true
                 result?.date = Date()
-                //TODO encode the result to json
-                //if result.success
+           
                 commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
             } else {
                 result?.success = false
@@ -86,9 +75,7 @@ import UIKit
             result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method checkBluetooth"
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
-        //else
-        //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
-
+   
     }
 
     @objc(scan:) func scan(command : CDVInvokedUrlCommand){
@@ -164,13 +151,8 @@ import UIKit
         if result != nil {
             result?.method = "send"
             result?.date = Date()
-
-            //if result nill or result.timeout or result.dbdistance are nill or badgeCode nil then Result.success=false
-            //simulate access with fake reader
-            //if fakeDevice = result.deviceName {
-                result?.success = true
-                result?.message = "Badge sended"
-            // TODO: SET ZBLEBADGE
+            result?.success = true
+            result?.message = "Badge sended"
             do {
                 let badge =  try ZBLEBadge(badgecode: UInt64(result?.badgeCode ?? "") ?? 0000, direction: direction, dirmode: DirMode.DM_IN_OR_OUT)
                 let deviceId = UUID(uuidString: result?.deviceId ?? "")!
@@ -187,9 +169,7 @@ import UIKit
             result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method send"
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         }
-        //else
-        //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
-   
+
     }
 
 
@@ -202,10 +182,7 @@ import UIKit
             //TODO use the SDK to stop the scanning
             result?.success = true
 
-            //if result.success
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
-            //else
-            //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         } else {
             result = Result(method: "stop")
             result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method stop"
@@ -275,8 +252,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
-            // TODO: SET DIRMODE
-           // result?.dirMode = device.dirMode
+           
         }
     }
 }
