@@ -235,7 +235,14 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func foundDeviceNear(_ device: ZBluetoothLEDevice) {
-        // ---
+        dispatchGroup?.leave()
+        if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
+            result?.deviceMac = device.mac
+            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+            result?.deviceId = "\(device.id)"
+            // TODO: SET DIRMODE
+           // result?.dirMode = device.dirMode
+        }
     }
     
     func validatedBeacon(_ device: ZBluetoothLEDevice) {
@@ -247,12 +254,13 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
-        dispatchGroup?.leave()
-        if result != nil {
-            result?.deviceMac = device.mac
-            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
-            result?.deviceId = "\(device.id)"
-           
-        }
+//        dispatchGroup?.leave()
+//        if result != nil {
+//            result?.deviceMac = device.mac
+//            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+//            result?.deviceId = "\(device.id)"
+//            // TODO: SET DIRMODE
+//           // result?.dirMode = device.dirMode
+//        }
     }
 }
