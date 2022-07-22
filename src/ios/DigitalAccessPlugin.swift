@@ -254,13 +254,13 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
-//        dispatchGroup?.leave()
-//        if result != nil {
-//            result?.deviceMac = device.mac
-//            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
-//            result?.deviceId = "\(device.id)"
-//            // TODO: SET DIRMODE
-//           // result?.dirMode = device.dirMode
-//        }
+        dispatchGroup?.leave()
+        if result != nil {
+            result?.deviceMac = device.mac
+            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+            result?.deviceId = "\(device.id)"
+           // TODO: SET DIRMODE
+           // result?.dirMode = device.dirMode
+        }
     }
 }
