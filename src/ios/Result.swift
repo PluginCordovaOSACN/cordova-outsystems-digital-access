@@ -13,11 +13,13 @@ class Result: Encodable {
     var location: String?
     var isTimeout: Bool?
     var sdkVersion: Int? //only for android
+    var otherMessage: String?
     init(method: String) {
         timeout = 60
         self.method = method
         self.success = false
         message = ""
+        otherMessage = ""
         dbDistance = 40
         date = Date()
         self.method = method
