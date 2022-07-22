@@ -115,7 +115,6 @@ import UIKit
                     if elapsed == .success {
                         if self.result?.deviceMac != nil {
                             self.result?.success = true
-                            self.result?.message = "Device found"
 
                             self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
                             
@@ -259,6 +258,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
+            result?.sdkVersion = device.distance.intValue
            // TODO: SET DIRMODE
            // result?.dirMode = device.dirMode
         }
