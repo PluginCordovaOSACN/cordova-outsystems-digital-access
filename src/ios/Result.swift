@@ -14,6 +14,7 @@ class Result: Encodable {
     var isTimeout: Bool?
     var sdkVersion: Int? //only for android
     var otherMessage: String?
+    var userDevice: String?
     init(method: String) {
         timeout = 60
         self.method = method
@@ -23,5 +24,6 @@ class Result: Encodable {
         dbDistance = 40
         date = Date()
         self.method = method
+        self.userDevice = "iOS"
     }
 }
