@@ -8,8 +8,8 @@ import UIKit
 
     public var result: Result?
 
-    private let dbMinDistance = 40
-    private let dbMaxDistance = 110
+    private let dbMinDistance = - 40
+    private let dbMaxDistance = - 110
 
     private let fakeDevice = "FakeDevice"
     
@@ -35,21 +35,21 @@ import UIKit
         result = Result(method: "init")
         result?.timeout = timeoutScan
 
-        result?.dbDistance = dbDistance
+        result?.dbDistance = - dbDistance
         result?.location = buildingDefault
         result?.badgeCode = badgeCode
 
         result?.success = true
         result?.date = Date()
 
-        if dbMinDistance > dbDistance || dbDistance > dbMaxDistance {
-            result?.success = false
-            result?.message = "db distance is not valid. Dbdistance must be inside this range: \(dbMinDistance) NEAR to \(dbMaxDistance) FAR\nTo set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))"
+       // if dbMinDistance > dbDistance || dbDistance > dbMaxDistance {
+       //     result?.success = false
+       //     result?.message = "db distance is not valid. Dbdistance must be inside this range: \(dbMinDistance) NEAR to \(dbMaxDistance) FAR\nTo set the dbDistance parameter use the method: init(callback, callbackError, timeout, numberOfBadge, dbDistance))"
 
-            commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
-        } else {
+       //     commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
+       // } else {
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
-        }
+       // }
 
     }
 
@@ -198,7 +198,17 @@ import UIKit
 extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func devicesListUpdated(_ device: ZBluetoothLEDevice) {
-        // ---
+        dispatchGroup?.leave()
+        result?.otherMessage = "devicesListUpdated"
+        result?.sdkVersion = device.distance.intValue
+        //if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
+        result?.deviceMac = device.mac
+        result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+        result?.deviceId = "\(device.id)"
+            
+        //TODO: SET DIRMODE
+        //result?.dirMode = device.dirMode
+        //}    
     }
     
     func deviceRemoved(_ device: ZBluetoothLEDevice) {
