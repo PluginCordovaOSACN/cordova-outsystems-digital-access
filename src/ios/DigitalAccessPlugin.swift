@@ -93,7 +93,7 @@ import UIKit
             
             result?.method = "scan"
             result?.date = Date()
-            
+            result?.userDevice = "iOS"
             result?.badgeCode = badgeCode
 
             if isUsingFakeDevice ?? false == true {
@@ -148,6 +148,7 @@ import UIKit
         let direction: ZBLEBadge.Direction = dir ?? false ? .IN : .OUT
         
         if result != nil {
+            result?.userDevice = "iOS"
             result?.method = "send"
             result?.date = Date()
             result?.success = true
@@ -226,7 +227,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func bluetoothBecomeAvailable() {
         // ---
-//        blemanager?.updateDevicesList()
+        blemanager?.updateDevicesList()
     }
     
     func bluetoothBecomeUnavailable() {
@@ -235,10 +236,13 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func foundDeviceNear(_ device: ZBluetoothLEDevice) {
         dispatchGroup?.leave()
+        result?.otherMessage = "foundDeviceNear"
+        result?.sdkVersion = device.distance.intValue
         if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
+            
             // TODO: SET DIRMODE
            // result?.dirMode = device.dirMode
         }
@@ -254,6 +258,8 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
         dispatchGroup?.leave()
+        result?.otherMessage = "firstDeviceFound"
+        result?.sdkVersion = device.distance.intValue
         if result != nil {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
