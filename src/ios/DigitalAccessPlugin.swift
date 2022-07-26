@@ -8,8 +8,8 @@ import UIKit
 
     public var result: Result?
 
-    private let dbMinDistance = - 40
-    private let dbMaxDistance = - 110
+    private let dbMinDistance = -40
+    private let dbMaxDistance = -110
 
     private let fakeDevice = "FakeDevice"
     
@@ -35,7 +35,7 @@ import UIKit
         result = Result(method: "init")
         result?.timeout = timeoutScan
 
-        result?.dbDistance = - dbDistance
+        result?.dbDistance = -dbDistance
         result?.location = buildingDefault
         result?.badgeCode = badgeCode
 
@@ -198,13 +198,13 @@ import UIKit
 extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     
     func devicesListUpdated(_ device: ZBluetoothLEDevice) {
-        dispatchGroup?.leave()
-        result?.otherMessage = "devicesListUpdated"
-        result?.sdkVersion = device.distance.intValue
+        //dispatchGroup?.leave()
+        //result?.otherMessage = "devicesListUpdated"
+        //result?.sdkVersion = device.distance.intValue
         //if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
-        result?.deviceMac = device.mac
-        result?.deviceName = "\(device.deviceInfo) - \(device.description)"
-        result?.deviceId = "\(device.id)"
+        //result?.deviceMac = device.mac
+        //result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+        //result?.deviceId = "\(device.id)"
             
         //TODO: SET DIRMODE
         //result?.dirMode = device.dirMode
@@ -248,7 +248,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
         dispatchGroup?.leave()
         result?.otherMessage = "foundDeviceNear"
         result?.sdkVersion = device.distance.intValue
-        if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
+        if result != nil && result?.dbDistance <= device.distance.intValue {
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
@@ -267,16 +267,16 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
-        dispatchGroup?.leave()
-        result?.otherMessage = "firstDeviceFound"
-        result?.sdkVersion = device.distance.intValue
-        if result != nil {
-            result?.deviceMac = device.mac
-            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
-            result?.deviceId = "\(device.id)"
-            result?.sdkVersion = device.distance.intValue
+       // dispatchGroup?.leave()
+       // result?.otherMessage = "firstDeviceFound"
+       // result?.sdkVersion = device.distance.intValue
+       // if result != nil {
+       //     result?.deviceMac = device.mac
+        //    result?.deviceName = "\(device.deviceInfo) - \(device.description)"
+        //    result?.deviceId = "\(device.id)"
+        //    result?.sdkVersion = device.distance.intValue
            // TODO: SET DIRMODE
            // result?.dirMode = device.dirMode
-        }
+       // }
     }
 }
