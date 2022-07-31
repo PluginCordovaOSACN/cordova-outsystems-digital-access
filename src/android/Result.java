@@ -13,10 +13,46 @@ public class Result {
     private String deviceName;
     private Integer dbDistance;
     private Date date;
+    private Date Enddate;
+
     private String location;
     private boolean isTimeout;
+    private int sdkVersion;
+    private String otherMessage;
+    private String userDevice;
+    private String permissionDenied;
 
-   private int sdkVersion;
+    public String getPermissionDenied() {
+        return permissionDenied;
+    }
+
+    public void setPermissionDenied(String permissionDenied) {
+        this.permissionDenied = permissionDenied;
+    }
+
+    public Date getEnddate() {
+        return Enddate;
+    }
+
+    public void setEnddate(Date enddate) {
+        Enddate = enddate;
+    }
+
+    public String getOtherMessage() {
+        return otherMessage;
+    }
+
+    public void setOtherMessage(String otherMessage) {
+        this.otherMessage = otherMessage;
+    }
+
+    public String getUserDevice() {
+        return userDevice;
+    }
+
+    public void setUserDevice(String userDevice) {
+        this.userDevice = userDevice;
+    }
 
     public int getSdkVersion() {
         return sdkVersion;
@@ -25,7 +61,7 @@ public class Result {
     public void setSdkVersion(int sdkVersion) {
         this.sdkVersion = sdkVersion;
     }
-    
+
     public boolean isTimeout() {
         return isTimeout;
     }
