@@ -15,6 +15,16 @@ class Result: Encodable {
     var sdkVersion: Int? //only for android
     var otherMessage: String?
     var userDevice: String?
+    var deviceEnabled: Bool?
+    var deviceIconsVisible: Bool?
+    var deviceIconReversed: Bool?
+    var deviceCloseEnough: Bool?
+    var deviceIsAlive: Bool?
+    var meterDistance: Int?
+    var isCloseEnoughBK: Bool?
+    var minDistance: Int?
+    var minDistanceBK: Int?
+	var distanceMeter: Int?
     init(method: String) {
         timeout = 60
         self.method = method
