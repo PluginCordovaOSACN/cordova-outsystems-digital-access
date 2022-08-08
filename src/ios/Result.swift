@@ -20,11 +20,11 @@ class Result: Encodable {
     var deviceIconReversed: Bool?
     var deviceCloseEnough: Bool?
     var deviceIsAlive: Bool?
-    var meterDistance: Int?
+    var maxMeterDistance: Double?
     var isCloseEnoughBK: Bool?
     var minDistance: Int?
     var minDistanceBK: Int?
-	var distanceMeter: Int?
+    var distanceMeter: Double?
     init(method: String) {
         timeout = 60
         self.method = method
