@@ -4,7 +4,12 @@ import ZAxessBLELibrarySaipem
 import UIKit
 
 
-@objc(DigitalAccessPlugin) class DigitalAccessPlugin: CDVPlugin {
+@objc(DigitalAccessPlugin) class DigitalAccessPlugin: CDVPlugin, ZAxessBLEParametersDelegate {
+    func parameterChanged<T, C>(_ newvalue: T, parameter: C) {
+        
+        print("Parameters CHANGED: " + "\(newvalue)" + " param " + "\(parameter)")
+    }
+    
 
     public var result: Result?
 
@@ -12,7 +17,6 @@ import UIKit
     private let dbMaxDistance = 0
 
     private var deviceFound = false
-    private var isScanning = false
 
     private let fakeDevice = "FakeDevice"
     
@@ -20,6 +24,9 @@ import UIKit
     private var dispatchGroup: DispatchGroup?
     
     private  var command: CDVInvokedUrlCommand!
+    
+    private var parameters: ZAxessBLEParameters!
+
     
     private var resultJson: String {
         let jsonEncoder = JSONEncoder()
@@ -37,6 +44,9 @@ import UIKit
         
         deviceFound = false
         if blemanager == nil {
+            parameters = ZAxessBLEParameters(delegate: self)
+
+            parameters?.readerDistance = ZAxessBLEParameters.DistanceValue.near.rawValue
             blemanager = ZBTDeviceManager()
             blemanager.delegate = self
         }
@@ -107,7 +117,6 @@ import UIKit
     @objc(scan:) func scan(command : CDVInvokedUrlCommand){
         result?.deviceId = nil
         deviceFound = false
-        isScanning = true
         let badgeCode = command.argument(at: 0) as? String
         let isUsingFakeDevice = command.argument(at: 1) as? Bool // not mandatory default false
         blemanager.resetDevicesList()
@@ -136,6 +145,8 @@ import UIKit
             } else {
             
                DispatchQueue.global(qos: .default).async {
+                 
+
                     self.dispatchGroup = DispatchGroup()
                     self.dispatchGroup?.enter()
                     self.blemanager.refreshScan()
@@ -145,15 +156,12 @@ import UIKit
                     self.dispatchGroup = nil
                     if elapsed == .success {
                         if self.result?.deviceId != nil {
-                            self.isScanning = false
                             self.result?.success = true
                             self.result?.message = "Device found"
                             self.result?.isTimeout = false
-
                             self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
                             
                         } else {
-                            self.isScanning = false
 
                             self.result?.success = false
                             self.result?.message = "No device founded"
@@ -161,11 +169,17 @@ import UIKit
                             self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
                         }
                     } else {
-                        self.isScanning = false
+                        if self.result?.deviceId != nil {
+                            self.result?.success = true
+                            self.result?.message = "Device found limit"
+                            self.result?.isTimeout = false
+                            self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
+                            
+                        } else {
                         self.result?.success = false
                         self.result?.message = "Timeout of scan"
                         self.result?.isTimeout = true
-                        self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)
+                            self.commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: self.resultJson), callbackId: command.callbackId)}
                     }
                 }
             }
@@ -258,8 +272,11 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
         print("deviceID " + device.id.description + " meter " + device.meterDistance.description + "deviceDB " + device.distance.intValue.description)
         
         
-        if isScanning && result != nil && result?.dbDistance ?? 0 >=
-            device.distance.intValue && device.meterDistance.doubleValue < result?.maxMeterDistance ?? 0.0 {
+        if  result != nil && result?.deviceId == nil &&
+                //result?.dbDistance ?? 0 >=
+            //device.distance.intValue &&
+                
+                device.meterDistance.doubleValue < result?.maxMeterDistance ?? 0.0 {
             print("deviceID found" + device.id.description + " meter " + device.meterDistance.description + "deviceDB " + device.distance.intValue.description)
 
             result?.deviceMac = device.mac
@@ -349,4 +366,3 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
 //        }
     }
 }
-
