@@ -246,10 +246,7 @@ import UIKit
             //TODO use the SDK to stop the scanning
             result?.success = true
 
-            //if result.success
             commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.ok, messageAs: resultJson), callbackId: command.callbackId)
-            //else
-            //commandDelegate.send(CDVPluginResult(status: CDVCommandStatus.error, messageAs: resultJson), callbackId: command.callbackId)
         } else {
             result = Result(method: "stop")
             result?.message = "Please use the method init(callback, callbackError, timeout, numberOfBadge, dbDistance) before use the method stop"
@@ -273,8 +270,7 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
         
         
         if  result != nil && result?.deviceId == nil &&
-                //result?.dbDistance ?? 0 >=
-            //device.distance.intValue &&
+
                 
                 device.meterDistance.doubleValue < result?.maxMeterDistance ?? 0.0 {
             print("deviceID found" + device.id.description + " meter " + device.meterDistance.description + "deviceDB " + device.distance.intValue.description)
@@ -283,12 +279,11 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
             result?.distanceMeter = device.meterDistance.doubleValue
-           
+		result?.otherMessage = "_listUpdated"
             deviceFound = true
             dispatchGroup?.leave()
 
-            // TODO: SET DIRMODE
-           // result?.dirMode = device.dirMode
+
         }
     }
     
@@ -336,16 +331,20 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     func foundDeviceNear(_ device: ZBluetoothLEDevice) {
         print("deviceID foundNear " + device.id.description + " meter " + device.meterDistance.description + "deviceDB " + device.distance.intValue.description)
 
-        dispatchGroup?.leave()
-        if result != nil && result?.dbDistance ?? 0 >= device.distance.intValue {
+        
+	 if  result != nil && result?.deviceId == nil &&              
+                device.meterDistance.doubleValue < result?.maxMeterDistance ?? 0.0 {
+
             result?.deviceMac = device.mac
             result?.deviceName = "\(device.deviceInfo) - \(device.description)"
             result?.deviceId = "\(device.id)"
-            // TODO: SET DIRMODE
-           // result?.dirMode = device.dirMode
+		result?.otherMessage = "_foundDeviceNear"
+            deviceFound = true
+
+		dispatchGroup?.leave()
         }
     }
-    
+        
     func validatedBeacon(_ device: ZBluetoothLEDevice) {
         // ---
     }
@@ -356,13 +355,6 @@ extension DigitalAccessPlugin: ZBTDeviceManagerProtocol {
     }
     
     func firstDeviceFound(_ device: ZBluetoothLEDevice) {
-//        dispatchGroup?.leave()
-//        if result != nil {
-//            result?.deviceMac = device.mac
-//            result?.deviceName = "\(device.deviceInfo) - \(device.description)"
-//            result?.deviceId = "\(device.id)"
-//            // TODO: SET DIRMODE
-//           // result?.dirMode = device.dirMode
-//        }
+
     }
 }

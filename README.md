@@ -68,3 +68,10 @@ Send the badge code to the Bluetooth device detected with the scan method
 Note: 
 IsAccessing (true or false) is not mandatory for Android
 	
+
+
+{
+    "plugin" :{
+        "url": "https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access"
+    }
+}
