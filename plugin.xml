@@ -8,8 +8,8 @@
     <license>MIT</license>
 
     <keywords>cordova,android</keywords>
-    <repo>https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access.git</repo>
-    <issue>https://github.com/PierPaoloAnnisAccenture/cordova-outsystems-digital-access/issues</issue>
+    <repo>https://github.com/PluginCordovaOSACN/cordova-outsystems-digital-access.git</repo>
+    <issue>https://github.com/PluginCordovaOSACN/cordova-outsystems-digital-access/issues</issue>
   
     <engines>
         <engine name="cordova" version=">=3.0.0"/>
